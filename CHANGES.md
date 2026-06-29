@@ -2,6 +2,9 @@
 
 ## 2026-06-29 (workspace)
 
+### Docs
+- `ARCHITECTURE_EN.md` (source de vérité) + `ARCHITECTURE.md` (miroir FR) : vue d'ensemble, stack, arborescence, diagramme mermaid des composants, modèles/services, flux d'état `AppState`, disposition 3 colonnes, persistance/sandbox, build.
+
 ### Added
 - **Niveau supérieur (workspace)** : on ouvre désormais une racine pouvant contenir **plusieurs projets** BMad. Modèle `Workspace` + service `WorkspaceScanner`.
 - Détection auto + fallback : si la racine est elle-même un projet → mode mono-projet ; sinon scan des sous-dossiers directs, retenant ceux contenant `_bmad/`, `docs/` ou `_bmad-output/`.

@@ -1,0 +1,179 @@
+# Architecture — BmadBrowser
+
+> Miroir français de `ARCHITECTURE_EN.md` (source de vérité). Les deux fichiers
+> doivent refléter exactement les mêmes changements, édités dans le même tour.
+
+## 1. Vue d'ensemble
+
+BmadBrowser est une application macOS native (SwiftUI) pour **naviguer et éditer**
+les artefacts markdown produits par la méthode
+[BMad](https://github.com/bmad-code-org/BMAD-METHOD) (v6).
+
+Elle s'organise autour de trois niveaux imbriqués :
+
+1. **Workspace** — une racine qui regroupe un ou plusieurs projets.
+2. **Projet** — un projet BMad (sa propre config `_bmad/` et son dossier de sortie).
+3. **Document** — un fichier du dossier de sortie du projet (markdown, image, PDF, …).
+
+L'interface reflète ces niveaux dans une disposition à 3 colonnes.
+
+## 2. Stack technique
+
+| Sujet | Choix |
+|-------|-------|
+| UI | SwiftUI, macOS 14+ |
+| État | `@Observable` (framework Observation) |
+| Rendu markdown | [MarkdownUI](https://github.com/gonzalezreal/swift-markdown-ui) (SPM) |
+| PDF | PDFKit |
+| Génération du projet | [XcodeGen](https://github.com/yonaskolb/XcodeGen) — `project.yml` est la source de vérité, le `.xcodeproj` est généré |
+| Sandbox | App Sandbox + `files.user-selected.read-write` + security-scoped bookmarks |
+
+## 3. Arborescence du projet
+
+```
+project.yml                  # définition XcodeGen (source de vérité)
+Sources/
+  BmadBrowserApp.swift       # point d'entrée @main + commandes de menu
+  Models/
+    Workspace.swift          # niveau supérieur : racine + projets découverts
+    BmadProject.swift         # un projet : URL racine + dossier de sortie résolu
+    DocumentNode.swift        # nœud d'arbre (fichier ou dossier)
+    Frontmatter.swift         # métadonnées YAML parsées
+  Services/
+    WorkspaceScanner.swift    # découvre les projets sous une racine
+    ProjectScanner.swift      # construit l'arbre de documents d'un projet
+    ConfigResolver.swift      # résout le dossier de sortie BMad + détection projet
+    FrontmatterParser.swift   # extrait le bloc YAML --- ... ---
+    BookmarkStore.swift       # persiste l'accès à la racine du workspace
+  ViewModels/
+    AppState.swift            # @Observable, source unique de l'état UI
+  Views/
+    ContentView.swift         # NavigationSplitView à 3 colonnes
+    ProjectListView.swift     # colonne 1 : projets du workspace
+    DocumentTreeView.swift    # colonne 2 : arbre des documents + badges de statut
+    DocumentDetailView.swift  # colonne 3 : rendu markdown / éditeur + Cmd+S
+    MediaViews.swift          # ImageViewer (zoom) + PDFViewer
+Resources/                    # entitlements, catalogue d'assets
+```
+
+## 4. Diagramme des composants
+
+```mermaid
+graph TD
+    App[BmadBrowserApp @main] --> CV[ContentView]
+    CV --> PLV[ProjectListView]
+    CV --> DTV[DocumentTreeView]
+    CV --> DDV[DocumentDetailView]
+
+    PLV --> State[AppState @Observable]
+    DTV --> State
+    DDV --> State
+
+    State -->|ouvre racine| WS[WorkspaceScanner]
+    WS -->|utilise| CR[ConfigResolver]
+    WS --> Workspace[(Workspace + projets)]
+
+    State -->|sélectionne projet| PS[ProjectScanner]
+    PS --> Tree[(arbre DocumentNode)]
+    PS -->|par .md| FP[FrontmatterParser]
+
+    State -->|persiste racine| BS[BookmarkStore]
+    DDV -->|rendu| MUI[MarkdownUI]
+    DDV --> Media[ImageViewer / PDFViewer]
+```
+
+## 5. Modèles
+
+- **`Workspace`** — `rootURL`, `projects: [BmadProject]`, `isSingleProject`.
+  Le niveau supérieur. `isSingleProject` vaut `true` quand la racine choisie est
+  elle-même un projet (mode mono-projet).
+- **`BmadProject`** — `rootURL` (dossier du projet) + `outputURL` (dossier
+  d'artefacts résolu). `name` = dernier composant du chemin racine.
+- **`DocumentNode`** — nœud (classe) de l'arbre de documents. Porte `url`,
+  `isDirectory`, `children` optionnels, `frontmatter` optionnel. Expose
+  `isMarkdown`, `isImage`, `isPDF`, et un `systemImage` pour l'icône de ligne.
+- **`Frontmatter`** — clés/valeurs YAML parsées, avec un accès pratique `status`.
+
+## 6. Services
+
+- **`WorkspaceScanner.scan(rootURL:)`** — point d'entrée à l'ouverture d'une racine.
+  - Si la racine **elle-même** ressemble à un projet BMad → workspace mono-projet
+    (`isSingleProject = true`).
+  - Sinon scanne les **sous-dossiers directs** et retient ceux qui ressemblent à
+    un projet BMad, triés par nom.
+- **`ConfigResolver`** —
+  - `looksLikeBmadProject(_:)` → `true` si le dossier contient `_bmad/`,
+    `_bmad-output/` ou `docs/`. C'est la règle de détection de projet.
+  - `resolveOutputFolder(projectRoot:)` → lit `_bmad/config.toml`
+    (`output_folder`, en résolvant `{project-root}`), avec fallbacks `docs/`,
+    `_bmad-output/`, sinon la racine elle-même.
+- **`ProjectScanner.buildTree(at:)`** — construit récursivement l'arbre
+  `DocumentNode` d'un dossier de sortie, en ne gardant que les extensions visibles
+  (md, images, pdf, xlsx, …), en ignorant les dossiers vides, et en parsant le
+  frontmatter des fichiers `.md`.
+- **`FrontmatterParser`** — extrait le bloc YAML `--- … ---` en tête.
+- **`BookmarkStore`** — enregistre/restaure un security-scoped bookmark vers la
+  **racine du workspace** dans `UserDefaults`.
+
+## 7. État & flux de données (`AppState`)
+
+`AppState` est l'unique source de vérité `@Observable`, détenue par l'app et liée
+aux vues.
+
+État clé : `workspace`, `project` (sélectionné), `tree`, `selection`,
+`documentBody`, `currentFrontmatter`, `isEditing`, `isDirty`, `searchText`,
+`errorMessage`.
+
+Flux principaux :
+
+- **Ouvrir une racine** — `open(rootURL:persist:)` lance `WorkspaceScanner.scan`,
+  stocke le workspace, persiste le bookmark de la racine, puis sélectionne
+  automatiquement le premier projet (ou affiche une erreur si aucun trouvé).
+- **Sélectionner un projet** — `selectProject(_:)` construit l'arbre de documents
+  du dossier de sortie du projet et réinitialise sélection/éditeur.
+- **Sélectionner un document** — `select(_:)` charge le markdown (en séparant
+  frontmatter et corps) ou laisse le corps vide pour les médias rendus par la vue
+  détail.
+- **Éditer & sauvegarder** — l'éditeur bascule `isEditing` ; `markDirty()` suit
+  les modifications non sauvegardées ; `save()` réécrit frontmatter + corps sur
+  disque (`⌘S`).
+- **Recharger** — `reload()` re-scanne la racine du workspace (détecte les projets
+  ajoutés/supprimés), conserve le projet courant (apparié par `rootURL`) et
+  re-sélectionne le document précédemment ouvert s'il est toujours présent.
+- **Filtrer** — `filteredTree` filtre l'arbre par nom de fichier depuis `searchText`.
+
+## 8. Disposition de l'interface
+
+`ContentView` est un `NavigationSplitView` à 3 colonnes :
+
+```
+┌─────────┬──────────────┬─────────────┐
+│ PROJETS │ DOCUMENTS    │   DÉTAIL    │
+│ • ProjA │ ▸ docs/      │  # Titre    │
+│   ProjB │   ▸ prd.md   │  contenu…   │
+└─────────┴──────────────┴─────────────┘
+```
+
+- **Colonne 1 — `ProjectListView`** : en-tête du workspace (nom + nombre de
+  projets) et liste des projets ; en sélectionner un appelle `selectProject`.
+- **Colonne 2 — `DocumentTreeView`** : en-tête du projet + arbre latéral avec
+  badges de statut ; filtrable par nom.
+- **Colonne 3 — `DocumentDetailView`** : rendu MarkdownUI ou `TextEditor`, barre
+  de frontmatter, visionneuses image/PDF, et la toolbar éditer/enregistrer.
+
+Titre de la fenêtre = nom du workspace ; sous-titre = `projet › document`.
+
+## 9. Persistance & sandbox
+
+L'app est sandboxée. L'utilisateur accorde l'accès via `NSOpenPanel` ; cet accès
+est persisté par un **security-scoped bookmark** de la racine du workspace
+(`BookmarkStore`), restauré au lancement via `restoreLastProject()`.
+
+## 10. Build
+
+```bash
+xcodegen generate
+xcodebuild -project BmadBrowser.xcodeproj -scheme BmadBrowser -destination 'platform=macOS' build
+```
+
+`project.yml` fait foi ; régénérer après ajout/suppression de fichiers source.

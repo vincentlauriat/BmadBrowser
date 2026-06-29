@@ -53,4 +53,5 @@ Resources/               # entitlements, assets
 - [ ] Édition du frontmatter en formulaire
 - [ ] Workspaces / projets récents
 
-> Voir `PLAN.md` pour le découpage des phases et `TODOS.md` pour l'avancement.
+> Voir `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) pour la conception détaillée,
+> `PLAN.md` pour le découpage des phases et `TODOS.md` pour l'avancement.
