@@ -4,6 +4,10 @@
 
 ### Docs
 - `ARCHITECTURE_EN.md` (source de vérité) + `ARCHITECTURE.md` (miroir FR) : vue d'ensemble, stack, arborescence, diagramme mermaid des composants, modèles/services, flux d'état `AppState`, disposition 3 colonnes, persistance/sandbox, build.
+- `LICENSE` (MIT, © 2026 Vincent Lauriat) + section Licence dans le README.
+
+### Chore
+- Repo GitHub privé `vincentlauriat/BmadBrowser` créé (remote `origin`), `main` + branche feature poussés, topics ajoutés.
 
 ### Added
 - **Niveau supérieur (workspace)** : on ouvre désormais une racine pouvant contenir **plusieurs projets** BMad. Modèle `Workspace` + service `WorkspaceScanner`.

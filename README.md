@@ -55,3 +55,7 @@ Resources/               # entitlements, assets
 
 > Voir `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) pour la conception détaillée,
 > `PLAN.md` pour le découpage des phases et `TODOS.md` pour l'avancement.
+
+## Licence
+
+[MIT](LICENSE) © 2026 Vincent Lauriat
