@@ -51,7 +51,9 @@ BmadBrowser/
 2. **Détection projet** : NSOpenPanel → résolution `output_folder` → scan de l'arbre `.md`.
 3. **Navigation + preview** : arbre latéral, rendu MarkdownUI, frontmatter en badges.
 4. **Édition** : toggle preview/édition, TextEditor, sauvegarde Cmd+S, indicateur « modifié ».
-5. **Confort** : recherche plein-texte, filtres par statut/dossier, ouverture externe des non-md, persistance du dernier projet.
+5. **Confort** (en cours) : ✅ ouverture externe des non-md, ✅ persistance du dernier workspace, ✅ aperçu images/PDF, ✅ workspace multi-projets (niveau supérieur), ✅ affichage/édition fichiers texte (yaml/json/txt/csv/toml), ✅ AppIcon. Reste : recherche plein-texte, filtres par statut/dossier, édition frontmatter en formulaire, liste des récents.
+
+> Hors phases : icône générée par script Swift, dépôt GitHub privé (MIT), workflow feature branch → merge.
 
 ## Vérification
 `xcodebuild -scheme BmadBrowser build` vert à chaque phase. Test manuel sur un projet réel (ex: `clarify/docs`).

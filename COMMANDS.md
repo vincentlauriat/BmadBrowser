@@ -14,3 +14,6 @@
 | 10 | 2026-06-29 | peux tu creer un icon et lancer le projet ? |
 | 11 | 2026-06-29 | je vois bien l'icone |
 | 12 | 2026-06-29 | je voudrais aussi pouvoir ouvrir les fichiers .yaml |
+| 13 | 2026-06-29 | merge |
+| 14 | 2026-06-29 | mets a jour toutes les documentations |
+| 15 | 2026-06-29 | oui systematiquement (workflow feature branch → merge par défaut) |
