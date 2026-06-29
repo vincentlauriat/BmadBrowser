@@ -109,8 +109,20 @@ final class AppState {
         isDirty = false
 
         guard node.isMarkdown else {
-            documentBody = ""
-            currentFrontmatter = node.frontmatter
+            // Fichiers texte (yaml, json, …) : on charge le contenu brut, sans frontmatter.
+            if node.isText {
+                if let text = try? String(contentsOf: node.url, encoding: .utf8) {
+                    documentBody = text
+                    currentFrontmatter = nil
+                } else {
+                    documentBody = ""
+                    currentFrontmatter = nil
+                    errorMessage = "Impossible de lire \(node.name)."
+                }
+            } else {
+                documentBody = ""
+                currentFrontmatter = node.frontmatter
+            }
             return
         }
         if let text = try? String(contentsOf: node.url, encoding: .utf8) {
@@ -129,16 +141,26 @@ final class AppState {
     func markDirty() { isDirty = true }
 
     func save() {
-        guard let node = selection, node.isMarkdown else { return }
-        var full = ""
-        if let fm = currentFrontmatter, !fm.raw.isEmpty {
-            full += "---\n"
-            for (k, v) in fm.raw { full += "\(k): \(v)\n" }
-            full += "---\n"
+        guard let node = selection else { return }
+
+        let content: String
+        if node.isMarkdown {
+            var full = ""
+            if let fm = currentFrontmatter, !fm.raw.isEmpty {
+                full += "---\n"
+                for (k, v) in fm.raw { full += "\(k): \(v)\n" }
+                full += "---\n"
+            }
+            full += documentBody
+            content = full
+        } else if node.isText {
+            content = documentBody
+        } else {
+            return
         }
-        full += documentBody
+
         do {
-            try full.write(to: node.url, atomically: true, encoding: .utf8)
+            try content.write(to: node.url, atomically: true, encoding: .utf8)
             isDirty = false
         } catch {
             errorMessage = "Échec de la sauvegarde : \(error.localizedDescription)"
