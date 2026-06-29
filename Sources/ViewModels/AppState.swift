@@ -4,6 +4,9 @@ import AppKit
 
 @Observable
 final class AppState {
+    /// Niveau supérieur : racine regroupant un ou plusieurs projets.
+    var workspace: Workspace?
+    /// Projet actuellement sélectionné dans le workspace.
     var project: BmadProject?
     var tree: [DocumentNode] = []
     var selection: DocumentNode?
@@ -24,42 +27,75 @@ final class AppState {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.prompt = "Ouvrir le projet"
-        panel.message = "Choisissez la racine d'un projet BMad"
+        panel.prompt = "Ouvrir"
+        panel.message = "Choisissez une racine contenant un ou plusieurs projets BMad"
         if panel.runModal() == .OK, let url = panel.url {
             open(rootURL: url, persist: true)
         }
     }
 
-    /// Restaure le dernier projet ouvert au démarrage (si bookmark disponible).
+    /// Restaure le dernier workspace ouvert au démarrage (si bookmark disponible).
     func restoreLastProject() {
         if let url = BookmarkStore.restore() {
             open(rootURL: url, persist: false)
         }
     }
 
+    /// Ouvre une racine : découvre les projets et sélectionne le premier.
     func open(rootURL: URL, persist: Bool) {
-        let output = ConfigResolver.resolveOutputFolder(projectRoot: rootURL)
-        let project = BmadProject(rootURL: rootURL, outputURL: output)
+        let workspace = WorkspaceScanner.scan(rootURL: rootURL)
+        self.workspace = workspace
+        if persist { BookmarkStore.save(rootURL) }
+
+        if let first = workspace.projects.first {
+            selectProject(first)
+        } else {
+            clearProject()
+            errorMessage = "Aucun projet BMad trouvé sous ce dossier (ni _bmad/, ni docs/, ni _bmad-output/)."
+        }
+    }
+
+    /// Sélectionne un projet du workspace et charge son arbre de documents.
+    func selectProject(_ project: BmadProject) {
         self.project = project
-        self.tree = ProjectScanner.buildTree(at: output)
+        self.tree = ProjectScanner.buildTree(at: project.outputURL)
         self.selection = nil
         self.documentBody = ""
         self.currentFrontmatter = nil
         self.isEditing = false
         self.isDirty = false
-        if persist { BookmarkStore.save(rootURL) }
-        if !ConfigResolver.looksLikeBmadProject(rootURL) {
-            errorMessage = "Ce dossier ne ressemble pas à un projet BMad (ni _bmad/, ni docs/). Les fichiers visibles ont quand même été listés."
-        }
+    }
+
+    /// Réinitialise l'état lié au projet courant (workspace vide).
+    private func clearProject() {
+        project = nil
+        tree = []
+        selection = nil
+        documentBody = ""
+        currentFrontmatter = nil
+        isEditing = false
+        isDirty = false
     }
 
     func reload() {
-        guard let project else { return }
-        let previouslySelected = selection?.url
-        tree = ProjectScanner.buildTree(at: project.outputURL)
-        if let url = previouslySelected, let node = findNode(url: url, in: tree) {
-            select(node)
+        guard let workspace else { return }
+        // Re-scanne la racine pour détecter les projets ajoutés/supprimés.
+        let refreshed = WorkspaceScanner.scan(rootURL: workspace.rootURL)
+        self.workspace = refreshed
+
+        // Conserve le projet courant (identifié par sa racine) et sa sélection si possible.
+        let current = project.flatMap { p in refreshed.projects.first { $0.rootURL == p.rootURL } }
+        if let current {
+            let previouslySelected = selection?.url
+            self.project = current
+            tree = ProjectScanner.buildTree(at: current.outputURL)
+            if let url = previouslySelected, let node = findNode(url: url, in: tree) {
+                select(node)
+            }
+        } else if let first = refreshed.projects.first {
+            selectProject(first)
+        } else {
+            clearProject()
         }
     }
 

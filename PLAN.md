@@ -21,20 +21,24 @@ BmadBrowser/
   Sources/
     BmadBrowserApp.swift      # @main
     Models/
+      Workspace.swift         # racine (niveau supérieur) + liste de projets
       BmadProject.swift       # racine projet + output folder résolu
       DocumentNode.swift      # arbre fichiers/dossiers
       Frontmatter.swift       # métadonnées parsées
     Services/
+      WorkspaceScanner.swift  # scanne la racine → projets (mono ou multi)
       ProjectScanner.swift    # lit config.toml, résout output_folder, construit l'arbre
       ConfigResolver.swift    # mini-parser ciblé du config.toml (+ fallbacks docs/ , _bmad-output/)
       FrontmatterParser.swift # extrait le bloc YAML --- ... ---
       BookmarkStore.swift     # security-scoped bookmarks (accès persistant au dossier)
     ViewModels/
-      AppState.swift          # @Observable : projet courant, sélection, contenu
+      AppState.swift          # @Observable : workspace, projet courant, sélection, contenu
     Views/
       ContentView.swift       # NavigationSplitView 3 colonnes
-      DocumentTreeView.swift  # arbre latéral + badges de statut
-      DocumentDetailView.swift# preview rendu / éditeur (toggle) + Cmd+S
+      ProjectListView.swift   # colonne 1 : projets du workspace
+      DocumentTreeView.swift  # colonne 2 : arbre latéral + badges de statut
+      DocumentDetailView.swift# colonne 3 : preview rendu / éditeur (toggle) + Cmd+S
+      MediaViews.swift        # ImageViewer (zoom) + PDFViewer
   Resources/                  # entitlements, assets
 ```
 
