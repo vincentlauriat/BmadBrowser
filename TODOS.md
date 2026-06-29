@@ -22,10 +22,11 @@
 
 ## Phase 5 — Confort (en cours)
 - [x] Aperçu intégré images (zoom) / PDF + images inline du markdown
+- [x] Niveau supérieur : workspace regroupant plusieurs projets (UI 3 colonnes)
 - [ ] Recherche plein-texte (contenu, pas seulement noms)
 - [ ] Filtres statut/type de workflow
 - [ ] Édition du frontmatter en formulaire
-- [ ] Liste des projets récents
+- [ ] Liste des workspaces/projets récents
 
 ## Test manuel restant
 - [ ] Lancer l'app et ouvrir un projet réel (ex: `~/Documents/GitHub/clarify`) pour valider l'UX

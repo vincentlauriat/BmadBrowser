@@ -1,7 +1,7 @@
 ---
 project: BmadBrowser
 last_updated: 2026-06-29
-phase: "MVP fonctionnel (phases 1-4) — build vert, test manuel à faire"
+phase: "MVP + niveau supérieur (workspace multi-projets) — build vert, test manuel à faire"
 ---
 
 # MEMORY — BmadBrowser
@@ -14,6 +14,7 @@ Outil macOS natif (SwiftUI) pour naviguer **et éditer** les documents markdown 
 - **Rendu markdown** : dépendance SPM **MarkdownUI**.
 - **Périmètre v1** : lecture + édition + sauvegarde.
 - **Source des docs** : sélecteur de dossier (NSOpenPanel) ; accès persistant via **security-scoped bookmark** (sandbox activé).
+- **Niveau supérieur (workspace)** : la racine ouverte peut regrouper plusieurs projets. `WorkspaceScanner` scanne les sous-dossiers directs ; un dossier est un projet s'il contient `_bmad/`, `docs/` ou `_bmad-output/`. Si la racine est elle-même un projet → mode mono-projet. UI 3 colonnes (Projets | Documents | Détail). Le bookmark persiste la racine du workspace, pas un projet isolé.
 
 ## Modèle BMad v6 (observé sur la machine)
 - Moteur dans `_bmad/` ; `config.toml` → `[core] output_folder = "{project-root}/docs"`.
@@ -21,8 +22,8 @@ Outil macOS natif (SwiftUI) pour naviguer **et éditer** les documents markdown 
 - Frontmatter YAML dans les `.md` : `status`, `date`/`completedAt`, `workflowType`, `lastStep`/`stepsCompleted`, `inputDocuments`.
 
 ## État actuel
-- Build `xcodebuild` vert, 0 erreur.
-- Phases 1-4 implémentées. Reste : test manuel + phase 5 (confort).
+- Build `xcodebuild` vert, 0 erreur, 0 warning.
+- Phases 1-4 + aperçu images/PDF + niveau supérieur (workspace multi-projets) implémentés. Reste : test manuel + suite phase 5 (confort).
 
 ## Pièges connus
 - Récursion de vue + `some View` → utiliser `List(_:children:selection:)` natif, pas une fonction `@ViewBuilder` qui s'appelle elle-même.

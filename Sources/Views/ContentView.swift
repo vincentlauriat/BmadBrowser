@@ -3,21 +3,30 @@ import SwiftUI
 struct ContentView: View {
     @Bindable var state: AppState
 
+    /// Sous-titre de la fenêtre : projet courant puis document sélectionné.
+    private var navigationSubtitle: String {
+        let parts = [state.project?.name, state.selection?.name].compactMap { $0 }
+        return parts.joined(separator: " › ")
+    }
+
     var body: some View {
         NavigationSplitView {
+            ProjectListView(state: state)
+                .navigationSplitViewColumnWidth(min: 180, ideal: 220)
+        } content: {
             DocumentTreeView(state: state)
                 .navigationSplitViewColumnWidth(min: 240, ideal: 300)
         } detail: {
             DocumentDetailView(state: state)
         }
-        .navigationTitle(state.project?.name ?? "BmadBrowser")
-        .navigationSubtitle(state.selection?.name ?? "")
+        .navigationTitle(state.workspace?.name ?? "BmadBrowser")
+        .navigationSubtitle(navigationSubtitle)
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 Button {
                     state.presentOpenPanel()
                 } label: {
-                    Label("Ouvrir un projet", systemImage: "folder")
+                    Label("Ouvrir une racine", systemImage: "folder")
                 }
             }
             ToolbarItem(placement: .navigation) {
@@ -26,7 +35,7 @@ struct ContentView: View {
                 } label: {
                     Label("Recharger", systemImage: "arrow.clockwise")
                 }
-                .disabled(state.project == nil)
+                .disabled(state.workspace == nil)
             }
         }
         .alert("Information", isPresented: Binding(

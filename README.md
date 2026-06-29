@@ -6,7 +6,8 @@ Outil macOS natif (SwiftUI) pour **naviguer et éditer** les documents produits 
 
 | Statut | Fonctionnalité |
 |--------|----------------|
-| ✅ | Ouverture d'un projet via sélecteur de dossier |
+| ✅ | **Niveau supérieur (workspace)** : ouverture d'une racine regroupant plusieurs projets BMad (UI 3 colonnes : Projets / Documents / Détail) |
+| ✅ | Détection auto des projets : la racine elle-même (mono-projet) ou ses sous-dossiers contenant `_bmad/`, `docs/` ou `_bmad-output/` |
 | ✅ | Détection auto du dossier de sortie BMad (`_bmad/config.toml` → `output_folder`, fallbacks `docs/`, `_bmad-output/`) |
 | ✅ | Arbre des documents (markdown + artefacts xlsx/pptx/png…) |
 | ✅ | Rendu markdown riche (MarkdownUI) + sélection de texte |
@@ -36,19 +37,20 @@ open -a BmadBrowser   # ou lancer depuis Xcode
 project.yml              # définition XcodeGen (source de vérité du projet)
 Sources/
   BmadBrowserApp.swift   # point d'entrée @main
-  Models/                # BmadProject, DocumentNode, Frontmatter
-  Services/              # ConfigResolver, ProjectScanner, FrontmatterParser, BookmarkStore
+  Models/                # Workspace, BmadProject, DocumentNode, Frontmatter
+  Services/              # WorkspaceScanner, ConfigResolver, ProjectScanner, FrontmatterParser, BookmarkStore
   ViewModels/AppState.swift
-  Views/                 # ContentView, DocumentTreeView, DocumentDetailView
+  Views/                 # ContentView, ProjectListView, DocumentTreeView, DocumentDetailView, MediaViews
 Resources/               # entitlements, assets
 ```
 
 ## Roadmap
 
+- [x] Aperçu des images / PDF intégré
+- [x] Niveau supérieur : workspace multi-projets
 - [ ] Recherche plein-texte (dans le contenu, pas seulement les noms)
 - [ ] Filtres par statut / type de workflow
 - [ ] Édition du frontmatter en formulaire
-- [ ] Aperçu des images / PDF intégré
-- [ ] Multi-projets récents
+- [ ] Workspaces / projets récents
 
 > Voir `PLAN.md` pour le découpage des phases et `TODOS.md` pour l'avancement.
