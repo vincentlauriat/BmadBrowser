@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"echo \\\"=== config.toml (clarify) ===\\\"; rtk read /Users/vincent/Documents/GitHub/clarify/_bmad/config.toml 2>/dev/null | head -30\\necho \\\"\\\"; echo \\\"=== docs dans projets BMad ===\\\"; for p...",
-  "error": "Exit code 1\n=== config.toml (clarify) ===\n# ─────────────────────────────────────────────────────────────────\n# Installer-managed. Regenerated on every install — treat as read-only.\n#\n# Direct edits to this file will be overwritten on the next install.\n# To change an install answer durably, re-run the installer (your prior\n# answers are remembered as defaults). To pin a value regardless of\n# install answers, or to add custom agents / override descriptors, use:\n#   _bmad/custom/config.toml       ...",
-  "timestamp": "2026-06-29T06:19:48.368Z",
-  "retry_count": 1
-}
