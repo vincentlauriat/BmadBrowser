@@ -1,0 +1,13 @@
+# Xcode / build
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+.DS_Store
+
+# XcodeGen génère le .xcodeproj depuis project.yml
+BmadBrowser.xcodeproj/
+
+# SPM
+.swiftpm/
+.build/
