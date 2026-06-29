@@ -11,3 +11,7 @@ BmadBrowser.xcodeproj/
 # SPM
 .swiftpm/
 .build/
+
+# Outillage local (OMC / Claude Code)
+.omc/
+.claude/
