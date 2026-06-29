@@ -9,7 +9,11 @@ struct DocumentDetailView: View {
         Group {
             if let node = state.selection {
                 if node.isMarkdown {
-                    markdownView
+                    markdownView(node)
+                } else if node.isImage {
+                    ImageViewer(url: node.url)
+                } else if node.isPDF {
+                    PDFViewer(url: node.url)
                 } else {
                     nonMarkdownView(node)
                 }
@@ -26,7 +30,7 @@ struct DocumentDetailView: View {
 
     // MARK: - Markdown
 
-    private var markdownView: some View {
+    private func markdownView(_ node: DocumentNode) -> some View {
         VStack(spacing: 0) {
             frontmatterBar
             Divider()
@@ -41,6 +45,7 @@ struct DocumentDetailView: View {
                 ScrollView {
                     Markdown(state.documentBody)
                         .markdownTheme(.gitHub)
+                        .markdownImageProvider(LocalImageProvider(baseURL: node.url.deletingLastPathComponent()))
                         .textSelection(.enabled)
                         .padding(20)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -104,6 +109,12 @@ struct DocumentDetailView: View {
                 }
                 .keyboardShortcut("s", modifiers: .command)
                 .disabled(!state.isDirty)
+            } else if let node = state.selection, node.isImage || node.isPDF {
+                Button {
+                    state.openExternally()
+                } label: {
+                    Label("Ouvrir dans l'app par défaut", systemImage: "arrow.up.forward.app")
+                }
             }
         }
     }

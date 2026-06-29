@@ -1,5 +1,14 @@
 # CHANGES — BmadBrowser
 
+## 2026-06-29 (suite)
+
+### Added
+- Affichage des **images** sélectionnées dans l'arbre : `ImageViewer` (zoom molette/pincement + boutons %, ajuster, dimensions px).
+- Affichage des **PDF** via PDFKit (`PDFViewer`, auto-scale).
+- Rendu **inline des images du markdown** : `LocalImageProvider` résout les chemins relatifs par rapport au dossier du document et charge les fichiers locaux (fallback réseau pour les URLs http).
+- Bouton « Ouvrir dans l'app par défaut » dans la toolbar pour image/PDF.
+- Extensions image élargies au scan (bmp, tiff, heic, svg) et helpers `isImage`/`isPDF` sur `DocumentNode`.
+
 ## 2026-06-29
 
 ### Added

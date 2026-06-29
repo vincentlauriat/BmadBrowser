@@ -20,11 +20,11 @@
 - [x] Toggle preview / édition
 - [x] Sauvegarde Cmd+S + indicateur modifié
 
-## Phase 5 — Confort (à venir)
+## Phase 5 — Confort (en cours)
+- [x] Aperçu intégré images (zoom) / PDF + images inline du markdown
 - [ ] Recherche plein-texte (contenu, pas seulement noms)
 - [ ] Filtres statut/type de workflow
 - [ ] Édition du frontmatter en formulaire
-- [ ] Aperçu intégré images / PDF
 - [ ] Liste des projets récents
 
 ## Test manuel restant

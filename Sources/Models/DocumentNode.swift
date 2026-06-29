@@ -17,7 +17,15 @@ final class DocumentNode: Identifiable, Hashable {
     }
 
     var isMarkdown: Bool {
-        url.pathExtension.lowercased() == "md" || url.pathExtension.lowercased() == "markdown"
+        ["md", "markdown"].contains(url.pathExtension.lowercased())
+    }
+
+    var isImage: Bool {
+        ["png", "jpg", "jpeg", "gif", "webp", "bmp", "tiff", "heic"].contains(url.pathExtension.lowercased())
+    }
+
+    var isPDF: Bool {
+        url.pathExtension.lowercased() == "pdf"
     }
 
     /// Icône SF Symbol selon le type de nœud.
