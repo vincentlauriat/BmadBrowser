@@ -6,6 +6,9 @@
 - **AppIcon** : icône macOS générée par un script Swift (AppKit/CoreGraphics, rendu vectoriel net à chaque taille 16→1024). Design : squircle dégradé bleu→indigo, carte document markdown (coin replié, ligne de titre accentuée + lignes de corps), pastille de statut verte. `AppIcon.appiconset` complet (mac idiom, @1x/@2x).
 - `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon` dans `project.yml`.
 
+### Fixed
+- `project.yml` : le catalogue d'assets était sous une clé `resources:` **inexistante** pour une target XcodeGen → silencieusement ignoré, `Assets.xcassets` jamais inclus, pas de `Assets.car` ni de `CFBundleIconName` (icône par défaut). Déplacé sous `sources:` ; `actool` compile désormais le catalogue et l'icône apparaît.
+
 ## 2026-06-29 (workspace)
 
 ### Docs
