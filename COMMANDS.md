@@ -11,3 +11,4 @@
 | 7 | 2026-06-29 | commit push merge |
 | 8 | 2026-06-29 | peux tu creer un repo pour le moment en privé mais fais tout comme s'il etait public |
 | 9 | 2026-06-29 | fais les deux (LICENSE MIT + suppression branche feature) |
+| 10 | 2026-06-29 | peux tu creer un icon et lancer le projet ? |

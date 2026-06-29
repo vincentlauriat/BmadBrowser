@@ -1,5 +1,11 @@
 # CHANGES — BmadBrowser
 
+## 2026-06-29 (icône)
+
+### Added
+- **AppIcon** : icône macOS générée par un script Swift (AppKit/CoreGraphics, rendu vectoriel net à chaque taille 16→1024). Design : squircle dégradé bleu→indigo, carte document markdown (coin replié, ligne de titre accentuée + lignes de corps), pastille de statut verte. `AppIcon.appiconset` complet (mac idiom, @1x/@2x).
+- `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon` dans `project.yml`.
+
 ## 2026-06-29 (workspace)
 
 ### Docs
