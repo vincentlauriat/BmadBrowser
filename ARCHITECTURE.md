@@ -91,7 +91,8 @@ graph TD
   d'artefacts résolu). `name` = dernier composant du chemin racine.
 - **`DocumentNode`** — nœud (classe) de l'arbre de documents. Porte `url`,
   `isDirectory`, `children` optionnels, `frontmatter` optionnel. Expose
-  `isMarkdown`, `isImage`, `isPDF`, et un `systemImage` pour l'icône de ligne.
+  `isMarkdown`, `isImage`, `isPDF`, `isText` (yaml/yml/json/txt/csv/toml),
+  `isEditable` (markdown ou texte), et un `systemImage` pour l'icône de ligne.
 - **`Frontmatter`** — clés/valeurs YAML parsées, avec un accès pratique `status`.
 
 ## 6. Services
@@ -132,11 +133,12 @@ Flux principaux :
 - **Sélectionner un projet** — `selectProject(_:)` construit l'arbre de documents
   du dossier de sortie du projet et réinitialise sélection/éditeur.
 - **Sélectionner un document** — `select(_:)` charge le markdown (en séparant
-  frontmatter et corps) ou laisse le corps vide pour les médias rendus par la vue
-  détail.
+  frontmatter et corps), charge le contenu brut des fichiers texte
+  (yaml/json/…), ou laisse le corps vide pour les médias rendus par la vue détail.
 - **Éditer & sauvegarder** — l'éditeur bascule `isEditing` ; `markDirty()` suit
-  les modifications non sauvegardées ; `save()` réécrit frontmatter + corps sur
-  disque (`⌘S`).
+  les modifications non sauvegardées ; `save()` réécrit le markdown (frontmatter
+  reconstruit + corps) ou le texte brut sur disque (`⌘S`), selon le type de
+  fichier.
 - **Recharger** — `reload()` re-scanne la racine du workspace (détecte les projets
   ajoutés/supprimés), conserve le projet courant (apparié par `rootURL`) et
   re-sélectionne le document précédemment ouvert s'il est toujours présent.
@@ -158,8 +160,10 @@ Flux principaux :
   projets) et liste des projets ; en sélectionner un appelle `selectProject`.
 - **Colonne 2 — `DocumentTreeView`** : en-tête du projet + arbre latéral avec
   badges de statut ; filtrable par nom.
-- **Colonne 3 — `DocumentDetailView`** : rendu MarkdownUI ou `TextEditor`, barre
-  de frontmatter, visionneuses image/PDF, et la toolbar éditer/enregistrer.
+- **Colonne 3 — `DocumentDetailView`** : rendu MarkdownUI ou `TextEditor` pour le
+  markdown, visionneuse/éditeur monospace pour les fichiers texte (yaml/json/…),
+  barre de frontmatter, visionneuses image/PDF, et la toolbar éditer/enregistrer
+  (affichée pour tout document `isEditable`).
 
 Titre de la fenêtre = nom du workspace ; sous-titre = `projet › document`.
 
@@ -177,3 +181,16 @@ xcodebuild -project BmadBrowser.xcodeproj -scheme BmadBrowser -destination 'plat
 ```
 
 `project.yml` fait foi ; régénérer après ajout/suppression de fichiers source.
+
+> **Piège du catalogue d'assets** — une target XcodeGen n'a **pas de clé
+> `resources:`** ; le catalogue d'assets doit être sous `sources:`. Le mettre sous
+> `resources:` le fait silencieusement ignorer (pas de `Assets.car`, pas de
+> `CFBundleIconName`, icône par défaut).
+
+## 11. Icône de l'app
+
+`Resources/Assets.xcassets/AppIcon.appiconset` est générée par un script Swift
+autonome (AppKit/CoreGraphics) qui rend l'icône vectoriellement à chaque taille
+requise (16→1024, @1x/@2x) : squircle dégradé avec carte document markdown et
+pastille de statut verte. `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon` la câble ;
+le catalogue est compilé par `actool` car il est sous `sources:`.

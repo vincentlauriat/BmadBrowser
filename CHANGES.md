@@ -11,6 +11,9 @@
 - `AppState.select(_:)` charge le contenu brut des fichiers texte (sans parsing frontmatter) ; `save()` écrit le markdown (frontmatter reconstruit) ou le texte brut selon le type.
 - Toolbar Éditer/Enregistrer affichée pour tout document éditable (`isEditable`), plus seulement le markdown.
 
+### Docs
+- Synchro complète de toute la documentation (MEMORY, PLAN, ARCHITECTURE EN+FR, README, TODOS, COMMANDS) : fichiers texte, AppIcon, workspace, piège XcodeGen `resources:`→`sources:`, statut GitHub/licence, workflow git feature branch → merge.
+
 ## 2026-06-29 (icône)
 
 ### Added
