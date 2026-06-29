@@ -7,7 +7,7 @@ enum ProjectScanner {
     private static let visibleExtensions: Set<String> = [
         "md", "markdown", "txt", "xlsx", "csv", "pptx", "key",
         "png", "jpg", "jpeg", "gif", "webp", "bmp", "tiff", "heic", "svg",
-        "pdf", "json", "yaml", "yml"
+        "pdf", "json", "yaml", "yml", "toml"
     ]
 
     static func buildTree(at root: URL) -> [DocumentNode] {

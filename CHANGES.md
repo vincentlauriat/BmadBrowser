@@ -1,5 +1,16 @@
 # CHANGES — BmadBrowser
 
+## 2026-06-29 (fichiers texte)
+
+### Added
+- Affichage et **édition des fichiers texte** non-markdown (`yaml`, `yml`, `json`, `txt`, `csv`, `toml`) : aperçu monospace scrollable (h/v) avec sélection, bascule édition + sauvegarde `⌘S` comme le markdown. En-tête indiquant le type de fichier.
+- `toml` ajouté aux extensions scannées ; icônes dédiées (`curlybraces` pour yaml/json/toml, `doc.plaintext` pour txt).
+- Helpers `DocumentNode.isText` / `isEditable`.
+
+### Changed
+- `AppState.select(_:)` charge le contenu brut des fichiers texte (sans parsing frontmatter) ; `save()` écrit le markdown (frontmatter reconstruit) ou le texte brut selon le type.
+- Toolbar Éditer/Enregistrer affichée pour tout document éditable (`isEditable`), plus seulement le markdown.
+
 ## 2026-06-29 (icône)
 
 ### Added

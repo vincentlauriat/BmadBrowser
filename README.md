@@ -10,6 +10,7 @@ Outil macOS natif (SwiftUI) pour **naviguer et éditer** les documents produits 
 | ✅ | Détection auto des projets : la racine elle-même (mono-projet) ou ses sous-dossiers contenant `_bmad/`, `docs/` ou `_bmad-output/` |
 | ✅ | Détection auto du dossier de sortie BMad (`_bmad/config.toml` → `output_folder`, fallbacks `docs/`, `_bmad-output/`) |
 | ✅ | Arbre des documents (markdown + artefacts xlsx/pptx/png…) |
+| ✅ | Affichage et édition des fichiers texte (`yaml`, `json`, `txt`, `csv`, `toml`) en monospace |
 | ✅ | Rendu markdown riche (MarkdownUI) + sélection de texte |
 | ✅ | Frontmatter YAML affiché en badges (statut, type, date) |
 | ✅ | Édition + sauvegarde (`⌘S`) avec indicateur « modifié » |

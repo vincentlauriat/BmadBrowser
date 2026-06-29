@@ -28,11 +28,21 @@ final class DocumentNode: Identifiable, Hashable {
         url.pathExtension.lowercased() == "pdf"
     }
 
+    /// Fichiers texte affichables/éditables en clair (hors markdown).
+    var isText: Bool {
+        ["yaml", "yml", "json", "txt", "csv", "toml"].contains(url.pathExtension.lowercased())
+    }
+
+    /// Document éditable dans l'app (markdown ou texte brut).
+    var isEditable: Bool { isMarkdown || isText }
+
     /// Icône SF Symbol selon le type de nœud.
     var systemImage: String {
         if isDirectory { return "folder" }
         switch url.pathExtension.lowercased() {
         case "md", "markdown": return "doc.text"
+        case "yaml", "yml", "json", "toml": return "curlybraces"
+        case "txt": return "doc.plaintext"
         case "xlsx", "csv": return "tablecells"
         case "pptx", "key": return "rectangle.on.rectangle"
         case "png", "jpg", "jpeg", "gif", "webp", "pdf": return "photo"

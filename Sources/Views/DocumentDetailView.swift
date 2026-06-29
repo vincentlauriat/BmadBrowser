@@ -14,6 +14,8 @@ struct DocumentDetailView: View {
                     ImageViewer(url: node.url)
                 } else if node.isPDF {
                     PDFViewer(url: node.url)
+                } else if node.isText {
+                    textView(node)
                 } else {
                     nonMarkdownView(node)
                 }
@@ -74,6 +76,41 @@ struct DocumentDetailView: View {
         }
     }
 
+    // MARK: - Texte brut (yaml, json, …)
+
+    private func textView(_ node: DocumentNode) -> some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 8) {
+                Image(systemName: node.systemImage)
+                Text(node.url.pathExtension.uppercased())
+                Spacer()
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(.quaternary.opacity(0.4))
+            Divider()
+
+            if state.isEditing {
+                TextEditor(text: Binding(
+                    get: { state.documentBody },
+                    set: { state.documentBody = $0; state.markDirty() }
+                ))
+                .font(.system(.body, design: .monospaced))
+                .padding(8)
+            } else {
+                ScrollView([.vertical, .horizontal]) {
+                    Text(state.documentBody)
+                        .font(.system(.body, design: .monospaced))
+                        .textSelection(.enabled)
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        }
+    }
+
     // MARK: - Non markdown
 
     private func nonMarkdownView(_ node: DocumentNode) -> some View {
@@ -91,7 +128,7 @@ struct DocumentDetailView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItemGroup {
-            if let node = state.selection, node.isMarkdown {
+            if let node = state.selection, node.isEditable {
                 if state.isDirty {
                     Text("• modifié").font(.caption).foregroundStyle(.orange)
                 }

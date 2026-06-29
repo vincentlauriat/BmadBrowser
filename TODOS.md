@@ -23,6 +23,7 @@
 ## Phase 5 — Confort (en cours)
 - [x] Aperçu intégré images (zoom) / PDF + images inline du markdown
 - [x] Niveau supérieur : workspace regroupant plusieurs projets (UI 3 colonnes)
+- [x] Affichage/édition des fichiers texte (yaml, json, txt, csv, toml)
 - [ ] Recherche plein-texte (contenu, pas seulement noms)
 - [ ] Filtres statut/type de workflow
 - [ ] Édition du frontmatter en formulaire
