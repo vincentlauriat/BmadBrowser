@@ -20,6 +20,11 @@ final class AppState {
     var searchText = ""
     var errorMessage: String?
 
+    /// Dialogue « modifications non enregistrées » affiché avant une navigation destructive.
+    var showUnsavedDialog = false
+    /// Action à exécuter une fois le sort des modifications en cours tranché.
+    private var pendingAction: (() -> Void)?
+
     // MARK: - Ouverture de projet
 
     func presentOpenPanel() {
@@ -43,6 +48,8 @@ final class AppState {
 
     /// Ouvre une racine : découvre les projets et sélectionne le premier.
     func open(rootURL: URL, persist: Bool) {
+        // Nouvelle racine choisie par l'utilisateur : libère l'accès scoped restauré au démarrage.
+        if persist { BookmarkStore.stopCurrentAccess() }
         let workspace = WorkspaceScanner.scan(rootURL: rootURL)
         self.workspace = workspace
         if persist { BookmarkStore.save(rootURL) }
@@ -101,9 +108,43 @@ final class AppState {
 
     // MARK: - Sélection / chargement
 
+    /// Exécute `action` immédiatement, ou demande confirmation si des modifications
+    /// non enregistrées seraient perdues.
+    func guardUnsaved(_ action: @escaping () -> Void) {
+        if isDirty {
+            pendingAction = action
+            showUnsavedDialog = true
+        } else {
+            action()
+        }
+    }
+
+    /// L'utilisateur choisit d'ignorer les modifications en cours.
+    func discardAndProceed() {
+        isDirty = false
+        showUnsavedDialog = false
+        let action = pendingAction
+        pendingAction = nil
+        action?()
+    }
+
+    /// L'utilisateur choisit d'enregistrer avant de poursuivre.
+    func saveAndProceed() {
+        save()
+        showUnsavedDialog = false
+        let action = pendingAction
+        pendingAction = nil
+        action?()
+    }
+
+    /// L'utilisateur annule la navigation ; les modifications restent en cours.
+    func cancelPending() {
+        showUnsavedDialog = false
+        pendingAction = nil
+    }
+
     func select(_ node: DocumentNode) {
         guard !node.isDirectory else { return }
-        if isDirty { /* on garde simple : le contenu non sauvegardé est perdu si on change */ }
         selection = node
         isEditing = false
         isDirty = false
@@ -132,7 +173,7 @@ final class AppState {
         } else {
             documentBody = ""
             currentFrontmatter = nil
-            errorMessage = "Impossible de lire \(node.name)."
+            errorMessage = String(localized: "Couldn't read \(node.name).")
         }
     }
 
@@ -145,14 +186,13 @@ final class AppState {
 
         let content: String
         if node.isMarkdown {
-            var full = ""
-            if let fm = currentFrontmatter, !fm.raw.isEmpty {
-                full += "---\n"
-                for (k, v) in fm.raw { full += "\(k): \(v)\n" }
-                full += "---\n"
+            // Réécrit le bloc frontmatter brut d'origine tel quel : préserve l'ordre des
+            // clés, les listes YAML et les valeurs multi-lignes. Seul le corps est modifié.
+            if let raw = currentFrontmatter?.rawBlock {
+                content = raw + "\n" + documentBody
+            } else {
+                content = documentBody
             }
-            full += documentBody
-            content = full
         } else if node.isText {
             content = documentBody
         } else {

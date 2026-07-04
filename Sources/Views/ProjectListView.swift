@@ -11,7 +11,7 @@ struct ProjectListView: View {
             set: { newID in
                 if let id = newID,
                    let project = state.workspace?.projects.first(where: { $0.id == id }) {
-                    state.selectProject(project)
+                    state.guardUnsaved { state.selectProject(project) }
                 }
             }
         )

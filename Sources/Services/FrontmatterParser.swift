@@ -21,6 +21,8 @@ enum FrontmatterParser {
         guard let end = endIndex else { return (Frontmatter(), text) }
 
         var fm = Frontmatter()
+        // Bloc brut reconstructible tel quel (délimiteurs inclus) pour une sauvegarde fidèle.
+        fm.rawBlock = lines[0...end].joined(separator: "\n")
         for i in 1..<end {
             let line = lines[i]
             guard let colon = line.firstIndex(of: ":") else { continue }

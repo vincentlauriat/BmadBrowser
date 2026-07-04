@@ -19,3 +19,5 @@
 | 15 | 2026-06-29 | oui systematiquement (workflow feature branch → merge par défaut) |
 | 16 | 2026-07-04 | lance l'application |
 | 17 | 2026-07-04 | application prête à être distribuée, en français et anglais, avec un github, un readme et toutes les documentations + page github.io + maj lauriat.fr |
+| 18 | 2026-07-04 | c'est tout pour aujourd'hui |
+| 19 | 2026-07-04 | peux tu regarder l'application et me suggerer les ameliorations, corrections, evolutions a mettre dans le TODOS.md |

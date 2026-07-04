@@ -1,5 +1,17 @@
 # CHANGES — BmadBrowser
 
+## 2026-07-04 (audit code v1.0.0 → backlog TODOS)
+
+### Docs
+- **Audit complet du code source** (17 fichiers Swift) : `TODOS.md` enrichi d'un backlog priorisé
+  post-v1.0.0 — sections « Bugs / corrections », « Confort / UX », « Évolutions techniques ».
+- Bug prioritaire documenté : **sauvegarde markdown destructive pour le frontmatter**
+  (`Frontmatter.raw` non ordonné → réordonne les clés YAML et aplatit/perd les listes à chaque `⌘S`).
+- Autres findings : perte silencieuse des modifs non sauvegardées au changement de document
+  (`AppState.select()`), message d'erreur français codé en dur (`AppState.swift:135`), badge de
+  statut de l'arbre non rafraîchi après édition, fuite d'accès security-scoped, absence totale de
+  tests / linter.
+
 ## 2026-07-04 (i18n, v1.0.0, distribution & site)
 
 ### Added

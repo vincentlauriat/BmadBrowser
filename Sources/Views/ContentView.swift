@@ -46,6 +46,15 @@ struct ContentView: View {
         } message: {
             Text(state.errorMessage ?? "")
         }
+        .confirmationDialog(
+            "You have unsaved changes.",
+            isPresented: $state.showUnsavedDialog,
+            titleVisibility: .visible
+        ) {
+            Button("Save") { state.saveAndProceed() }
+            Button("Discard", role: .destructive) { state.discardAndProceed() }
+            Button("Cancel", role: .cancel) { state.cancelPending() }
+        }
         .onAppear { state.restoreLastProject() }
     }
 }

@@ -10,7 +10,7 @@ struct DocumentTreeView: View {
             get: { state.selection?.id },
             set: { newID in
                 if let id = newID, let node = state.node(withID: id) {
-                    state.select(node)
+                    state.guardUnsaved { state.select(node) }
                 }
             }
         )
