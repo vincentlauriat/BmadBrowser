@@ -23,10 +23,22 @@ struct ContentView: View {
         .navigationSubtitle(navigationSubtitle)
         .toolbar {
             ToolbarItem(placement: .navigation) {
-                Button {
-                    state.presentOpenPanel()
+                Menu {
+                    if state.recentProjects.isEmpty {
+                        Text("No recent roots")
+                    } else {
+                        Section("Recent") {
+                            ForEach(state.recentProjects) { recent in
+                                Button(recent.name) { state.openRecent(recent) }
+                            }
+                        }
+                        Divider()
+                        Button("Clear Recents") { RecentsStore.clear() }
+                    }
                 } label: {
                     Label("Open a root", systemImage: "folder")
+                } primaryAction: {
+                    state.presentOpenPanel()
                 }
             }
             ToolbarItem(placement: .navigation) {

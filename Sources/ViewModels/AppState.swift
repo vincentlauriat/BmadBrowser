@@ -40,9 +40,23 @@ final class AppState {
         panel.prompt = String(localized: "Open")
         panel.message = String(localized: "Choose a root containing one or more BMad projects")
         if panel.runModal() == .OK, let url = panel.url {
+            // Nouvelle racine du panneau : libère l'accès scoped restauré précédent.
+            BookmarkStore.stopCurrentAccess()
             open(rootURL: url, persist: true)
         }
     }
+
+    /// Rouvre une racine récente (résout son bookmark scoped).
+    func openRecent(_ recent: RecentProject) {
+        guard let url = RecentsStore.resolve(recent) else {
+            errorMessage = String(localized: "Couldn't reopen \(recent.name). The folder may have moved.")
+            return
+        }
+        open(rootURL: url, persist: true)
+    }
+
+    /// Racines récemment ouvertes (pour le menu « Open Recent »).
+    var recentProjects: [RecentProject] { RecentsStore.all() }
 
     /// Restaure le dernier workspace ouvert au démarrage (si bookmark disponible).
     func restoreLastProject() {
@@ -53,11 +67,12 @@ final class AppState {
 
     /// Ouvre une racine : découvre les projets et sélectionne le premier.
     func open(rootURL: URL, persist: Bool) {
-        // Nouvelle racine choisie par l'utilisateur : libère l'accès scoped restauré au démarrage.
-        if persist { BookmarkStore.stopCurrentAccess() }
         let workspace = WorkspaceScanner.scan(rootURL: rootURL)
         self.workspace = workspace
-        if persist { BookmarkStore.save(rootURL) }
+        if persist {
+            BookmarkStore.save(rootURL)
+            RecentsStore.add(rootURL)
+        }
 
         if let first = workspace.projects.first {
             selectProject(first)

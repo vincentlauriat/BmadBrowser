@@ -13,6 +13,15 @@ enum BookmarkStore {
         accessedURL = nil
     }
 
+    /// Démarre l'accès scoped à `url` après avoir libéré le précédent. Une seule URL active.
+    @discardableResult
+    static func beginAccess(_ url: URL) -> Bool {
+        stopCurrentAccess()
+        guard url.startAccessingSecurityScopedResource() else { return false }
+        accessedURL = url
+        return true
+    }
+
     static func save(_ url: URL) {
         guard let data = try? url.bookmarkData(
             options: .withSecurityScope,
@@ -34,9 +43,7 @@ enum BookmarkStore {
             bookmarkDataIsStale: &isStale
         ) else { return nil }
         // Libère l'accès précédent avant d'en démarrer un nouveau (évite la fuite).
-        stopCurrentAccess()
-        guard url.startAccessingSecurityScopedResource() else { return nil }
-        accessedURL = url
+        guard beginAccess(url) else { return nil }
         if isStale { save(url) }
         return url
     }
