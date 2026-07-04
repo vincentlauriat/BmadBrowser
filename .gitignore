@@ -18,3 +18,7 @@ BmadBrowser.xcodeproj/
 # Outillage local (OMC / Claude Code)
 .omc/
 .claude/
+
+# Fichiers
+COMMANDS.md
+  
