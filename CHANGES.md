@@ -1,5 +1,27 @@
 # CHANGES — BmadBrowser
 
+## 2026-07-04 (i18n, v1.0.0, distribution & site)
+
+### Added
+- **Internationalisation EN/FR** via un String Catalog `Resources/Localizable.xcstrings` : base anglaise, traductions françaises fournies par le catalogue, pluriels gérés (ex. `%lld projects`).
+- **`Scripts/release.sh <version>`** : build Release, signature Developer ID (Hardened Runtime), notarisation Apple (profil trousseau `AppliMacVincentGithub`), staple, packaging DMG (`release/BmadBrowser-<version>.dmg`).
+- **Landing page** bilingue `docs/index.html` (GitHub Pages).
+- **README** entièrement en anglais + `README.fr.md` (miroir français).
+
+### Changed
+- Tout le texte UI codé en dur est passé du français vers des **clés anglaises** ; le français est désormais fourni par le String Catalog.
+- `MARKETING_VERSION` : `0.1.0` → **`1.0.0`** (première version publique).
+- `project.yml` : ajout de `options.developmentLanguage: en` et de la source `Resources/Localizable.xcstrings`.
+
+### Docs
+- README bilingue (EN + FR), `ARCHITECTURE_EN.md`/`ARCHITECTURE.md` : nouvelles sections « 12. Localization (i18n) » et « 13. Distribution », section « 3. Project layout » mise à jour (`Localizable.xcstrings`, `Scripts/release.sh`, `docs/`).
+- App ajoutée au portfolio github.io et à lauriat.fr.
+
+### Chore
+- Dépôt GitHub `vincentlauriat/BmadBrowser` rendu **public**.
+- GitHub Release **v1.0.0** publiée avec le DMG notarisé.
+- **GitHub Pages** activées sur `docs/`.
+
 ## 2026-06-29 (fichiers texte)
 
 ### Added

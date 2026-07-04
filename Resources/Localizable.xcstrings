@@ -1,0 +1,182 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%lld × %lld px" : {
+      "shouldTranslate" : false
+    },
+    "%lld %%" : {
+      "shouldTranslate" : false
+    },
+    "%lld projects" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "%lld project" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "%lld projects" } }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "%lld projet" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "%lld projets" } }
+            }
+          }
+        }
+      }
+    },
+    "• edited" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "• modifié" } }
+      }
+    },
+    "Choose a root containing one or more BMad projects" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez une racine contenant un ou plusieurs projets BMad" } }
+      }
+    },
+    "Couldn't read %@." : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Impossible de lire %@." } }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Éditer" } }
+      }
+    },
+    "Filter documents" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Filtrer les documents" } }
+      }
+    },
+    "Fit" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajuster" } }
+      }
+    },
+    "Information" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Information" } }
+      }
+    },
+    "missing image" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "image manquante" } }
+      }
+    },
+    "No BMad project found under this folder (no _bmad/, docs/, or _bmad-output/)." : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun projet BMad trouvé sous ce dossier (ni _bmad/, ni docs/, ni _bmad-output/)." } }
+      }
+    },
+    "No BMad project found under this root." : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun projet BMad trouvé sous cette racine." } }
+      }
+    },
+    "No document" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun document" } }
+      }
+    },
+    "No document selected" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun document sélectionné" } }
+      }
+    },
+    "No project" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun projet" } }
+      }
+    },
+    "No project open" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun projet ouvert" } }
+      }
+    },
+    "No root open" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune racine ouverte" } }
+      }
+    },
+    "Open" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir" } }
+      }
+    },
+    "Open a BMad project (⌘O) to see its documents." : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrez un projet BMad (⌘O) pour afficher ses documents." } }
+      }
+    },
+    "Open a projects root (⌘O)." : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrez une racine de projets (⌘O)." } }
+      }
+    },
+    "Open a root" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir une racine" } }
+      }
+    },
+    "Open a Root…" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir une racine…" } }
+      }
+    },
+    "Open in default app" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir dans l'app par défaut" } }
+      }
+    },
+    "Pick a document from the list." : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez un document dans la liste." } }
+      }
+    },
+    "Preview" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aperçu" } }
+      }
+    },
+    "Reload" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Recharger" } }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer" } }
+      }
+    },
+    "Save failed: %@" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échec de la sauvegarde : %@" } }
+      }
+    },
+    "Single project" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Projet unique" } }
+      }
+    },
+    "This file type can't be displayed here." : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ce type de fichier ne peut pas être affiché ici." } }
+      }
+    },
+    "This project has no readable BMad artifact." : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ce projet ne contient pas d'artefact BMad lisible." } }
+      }
+    },
+    "Unreadable image" : {
+      "localizations" : {
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Image illisible" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

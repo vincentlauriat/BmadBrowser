@@ -1,6 +1,9 @@
 # Xcode / build
 build/
 DerivedData/
+
+# Release artifacts (DMG shipped via GitHub Releases, not committed)
+release/
 *.xcuserstate
 xcuserdata/
 .DS_Store
