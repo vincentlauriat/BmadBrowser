@@ -1,7 +1,7 @@
 ---
 project: BmadBrowser
 last_updated: 2026-07-04
-phase: "v1.0.0 publique, bilingue EN/FR, DMG notarisé, repo public + site — build vert"
+phase: "post-v1.0.0 : audit code → corrections données + confort (recherche plein-texte, filtres, frontmatter en formulaire, récents, FSEvents, SVG) + tests + SwiftLint — build vert, 9 tests verts"
 ---
 
 # MEMORY — BmadBrowser
@@ -18,6 +18,9 @@ Outil macOS natif (SwiftUI) pour naviguer **et éditer** les documents markdown 
 - **Fichiers texte** : les non-markdown texte (`yaml`, `yml`, `json`, `txt`, `csv`, `toml`) sont affichés/édités en monospace (`DocumentNode.isText`/`isEditable`), chargement/écriture brute (pas de frontmatter). Les autres binaires → ouverture externe.
 - **AppIcon** : générée par un script Swift (AppKit/CoreGraphics), `Resources/Assets.xcassets/AppIcon.appiconset`. Script source : `scratchpad/gen_icon.swift` (hors repo) — à regénérer si le design change.
 - **Internationalisation (i18n)** : app bilingue EN/FR suivant la langue système. Langue de base = **anglais** (clés littérales dans le code UI) ; traductions françaises fournies par le String Catalog `Resources/Localizable.xcstrings` (compilé en `en.lproj`/`fr.lproj`, pluriels gérés). `project.yml` : `options.developmentLanguage: en` + catalogue sous `sources:`. Les strings non-SwiftUI (erreurs `AppState`, `NSOpenPanel`) utilisent `String(localized:)`.
+- **Sauvegarde frontmatter (invariant anti-corruption)** : `Frontmatter.rawBlock` conserve le bloc YAML **brut d'origine** (délimiteurs `---` inclus). `save()` d'un markdown écrit `rawBlock + "\n" + body` — jamais une reconstruction depuis `raw` (dictionnaire non ordonné, qui réordonnait les clés et aplatissait les listes). L'édition en formulaire (`FrontmatterParser.scalarFields`/`applying`) ne réécrit **que** les lignes scalaires éditées, laissant listes/blocs intacts. Ne jamais revenir à une reconstruction depuis un dictionnaire.
+- **Accès security-scoped** : `BookmarkStore` maintient **un seul** accès actif à la fois (`beginAccess`/`stopCurrentAccess`) ; `RecentsStore` (bookmarks scoped par récent) passe par `beginAccess`. Chemin panneau : `stopCurrentAccess()` avant `open()`. Ne pas rappeler `stopCurrentAccess` dans `open()` (casserait le flux « récent »).
+- **Rafraîchissement auto** : `FolderWatcher` (FSEvents, débounce 0.5 s) sur la racine ; `autoReloadIfSafe()` saute le reload si `isDirty`/`isEditing` pour ne pas écraser une édition.
 - **Distribution** : `Scripts/release.sh <version>` automatise build Release + signature Developer ID (Hardened Runtime) + notarisation Apple (profil trousseau partagé `AppliMacVincentGithub`) + staple + packaging DMG (`release/BmadBrowser-<version>.dmg`). `MARKETING_VERSION` bumpé à **`1.0.0`** (première version publique).
 - **Dépôt** : `github.com/vincentlauriat/BmadBrowser`, désormais **public**, licence MIT. Workflow git : feature branch → merge → suppression (jamais de push direct sur `main`). GitHub Release v1.0.0 avec DMG notarisé.
 - **Site** : landing page bilingue `docs/index.html` servie via **GitHub Pages** (`vincentlauriat.github.io/BmadBrowser`) ; app référencée sur le portfolio github.io et sur lauriat.fr.
@@ -28,9 +31,10 @@ Outil macOS natif (SwiftUI) pour naviguer **et éditer** les documents markdown 
 - Frontmatter YAML dans les `.md` : `status`, `date`/`completedAt`, `workflowType`, `lastStep`/`stepsCompleted`, `inputDocuments`.
 
 ## État actuel
-- Build `xcodebuild` vert, 0 erreur.
-- Implémenté : phases 1-4 + aperçu images/PDF + workspace multi-projets + AppIcon + affichage/édition fichiers texte (yaml/json/txt/csv/toml) + i18n EN/FR + distribution notarisée.
-- **v1.0.0 publiée** : dépôt GitHub public (MIT), GitHub Release v1.0.0 avec DMG signé/notarisé, landing page GitHub Pages, portfolio github.io + lauriat.fr. Reste : test manuel approfondi + suite phase 5 (recherche plein-texte, filtres, édition frontmatter en formulaire, récents).
+- Build `xcodebuild` vert, 0 erreur ; suite de tests verte (9 tests).
+- Implémenté : phases 1-4 + aperçu images/PDF/SVG + workspace multi-projets + AppIcon + affichage/édition fichiers texte (yaml/json/txt/csv/toml) + i18n EN/FR + distribution notarisée.
+- **v1.0.0 publiée** : dépôt GitHub public (MIT), GitHub Release v1.0.0 avec DMG signé/notarisé, landing page GitHub Pages, portfolio github.io + lauriat.fr.
+- **Post-v1.0.0 (branche `feat/audit-fixes-v1.1`, non mergée)** : audit code → 🔴 corrections données (round-trip frontmatter fidèle via `rawBlock`, confirmation modifs non sauvegardées, fuite scoped-access, badge rafraîchi) + 🟠 confort (recherche plein-texte, filtre statut, frontmatter en formulaire, menu contextuel, compteur mots/lecture, projets récents, FSEvents auto-reload) + 🟢 tests + SwiftLint + refactor. Reste reporté : outline markdown, coloration syntaxique, export PDF/HTML, préférences, Sparkle, multi-fenêtres.
 
 ## Pièges connus
 - Récursion de vue + `some View` → utiliser `List(_:children:selection:)` natif, pas une fonction `@ViewBuilder` qui s'appelle elle-même.

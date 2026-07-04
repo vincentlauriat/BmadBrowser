@@ -20,14 +20,14 @@
 - [x] Toggle preview / édition
 - [x] Sauvegarde Cmd+S + indicateur modifié
 
-## Phase 5 — Confort (en cours)
+## Phase 5 — Confort ✅
 - [x] Aperçu intégré images (zoom) / PDF + images inline du markdown
 - [x] Niveau supérieur : workspace regroupant plusieurs projets (UI 3 colonnes)
 - [x] Affichage/édition des fichiers texte (yaml, json, txt, csv, toml)
-- [ ] Recherche plein-texte (contenu, pas seulement noms)
-- [ ] Filtres statut/type de workflow
-- [ ] Édition du frontmatter en formulaire
-- [ ] Liste des workspaces/projets récents
+- [x] Recherche plein-texte (contenu, pas seulement noms)
+- [x] Filtres statut/type de workflow
+- [x] Édition du frontmatter en formulaire
+- [x] Liste des workspaces/projets récents
 
 ## Phase 6 — Distribution & i18n ✅
 - [x] i18n EN/FR (String Catalog `Resources/Localizable.xcstrings`, base anglaise + traductions FR + pluriels)
@@ -42,58 +42,41 @@
 
 # Améliorations, corrections & évolutions (audit code v1.0.0)
 
-## 🔴 Bugs / corrections (risque de corruption de données — prioritaire)
-- [ ] **Sauvegarde markdown destructive pour le frontmatter** — dans `AppState.save()`, le
-      bloc YAML est reconstruit à partir de `currentFrontmatter.raw`, un `[String: String]`
-      **non ordonné** (`Frontmatter.raw`). Conséquences à chaque `⌘S` d'un `.md` :
-      - l'**ordre des clés** du frontmatter change de façon aléatoire (diffs git parasites) ;
-      - les **valeurs non scalaires** (listes YAML `inputDocuments:` / `- item`, objets, multi-lignes)
-        sont **aplaties ou perdues** car le parser ne gère que `key: value` plat.
-      → Fix : préserver le bloc frontmatter **brut** d'origine (le réécrire tel quel, ne toucher
-      qu'au corps), ou stocker les paires ordonnées (`[(String,String)]`) + gérer les listes.
-      Fichiers : `Sources/ViewModels/AppState.swift:143`, `Sources/Models/Frontmatter.swift`,
-      `Sources/Services/FrontmatterParser.swift`.
-- [ ] **Perte silencieuse des modifications non sauvegardées** — `AppState.select()` contient
-      un `if isDirty { /* … perdu si on change */ }` vide : changer de document (ou de projet)
-      en mode édition **jette** les modifs sans prévenir. → Confirmation « Enregistrer / Ignorer /
-      Annuler » avant de basculer. Fichier : `Sources/ViewModels/AppState.swift:106`.
-- [ ] **Message d'erreur français codé en dur** — `AppState.select()` ligne 135 :
-      `"Impossible de lire \(node.name)."` alors que la variante localisée existe déjà
-      (ligne 120). Incohérence i18n → `String(localized:)`. Fichier : `Sources/ViewModels/AppState.swift:135`.
-- [ ] **Badge de statut de l'arbre figé après édition** — `node.frontmatter` est capturé au scan
-      initial ; après édition/sauvegarde du frontmatter d'un `.md`, la pastille dans l'arbre
-      (`NodeRow`) n'est pas rafraîchie. → Recharger le frontmatter du nœud après `save()`.
-- [ ] **Fuite d'accès security-scoped** — `BookmarkStore.restore()` appelle
-      `startAccessingSecurityScopedResource()` mais rien n'appelle jamais
-      `stopAccessingSecurityScopedResource()` (ni à `reload()`, ni à la réouverture d'une autre
-      racine). Mineur en mono-fenêtre mais réel. Fichier : `Sources/Services/BookmarkStore.swift`.
+## 🔴 Bugs / corrections (risque de corruption de données) ✅
+- [x] **Sauvegarde markdown destructive pour le frontmatter** — `save()` réécrit désormais le
+      bloc YAML **brut d'origine** (`Frontmatter.rawBlock`) au lieu de le reconstruire depuis un
+      dictionnaire non ordonné : l'ordre des clés, les listes et les valeurs multi-lignes sont
+      préservés. Couvert par un test de round-trip.
+- [x] **Perte silencieuse des modifications non sauvegardées** — dialogue de confirmation
+      « Save / Discard / Cancel » (`guardUnsaved`) avant tout changement de document/projet.
+- [x] **Message d'erreur français codé en dur** — remplacé par `String(localized:)`.
+- [x] **Badge de statut de l'arbre figé après édition** — le nœud est re-frontmatté et l'arbre
+      rafraîchi après `save()`.
+- [x] **Fuite d'accès security-scoped** — `BookmarkStore` ne garde qu'un seul accès actif
+      (`beginAccess`/`stopCurrentAccess`), libéré avant d'en démarrer un nouveau.
 
 ## 🟠 Confort / UX
-- [ ] **Rafraîchissement automatique** (FSEvents / `DispatchSource`) — BMad régénère les fichiers
-      hors de l'app ; aujourd'hui il faut cliquer « Reload » manuellement. Watch de la racine +
-      re-scan incrémental.
-- [ ] **Menu contextuel sur les nœuds** — « Révéler dans le Finder », « Copier le chemin »,
-      « Ouvrir dans l'app par défaut », « Copier le nom ».
-- [ ] **Sommaire / outline des titres markdown** (H1–H3) pour naviguer dans les longs documents.
+- [x] **Rafraîchissement automatique** (FSEvents) — `FolderWatcher` surveille la racine ;
+      auto-reload sauf pendant une édition en cours.
+- [x] **Menu contextuel sur les nœuds** — Révéler dans le Finder, Copier le chemin, Ouvrir.
+- [x] **Compteur de mots + temps de lecture** sous l'aperçu markdown.
+- [x] **Rendu SVG** inline dans la visionneuse d'image.
+- [ ] **Sommaire / outline des titres markdown** (H1–H3) — nécessite un rendu par section pour
+      le scroll-to-heading (MarkdownUI rend un bloc unique) ; reporté.
 - [ ] **Coloration syntaxique** pour les fichiers texte (json / yaml / toml) en lecture.
-- [ ] **Compteur de mots + temps de lecture** dans la barre du document markdown.
 - [ ] **Export** du markdown rendu (PDF / HTML).
-- [ ] **Rendu SVG** — `svg` est scanné (`visibleExtensions`) mais n'est ni `isImage` ni `isText`,
-      donc il tombe en « ouverture externe ». L'afficher inline (WebKit / conversion).
 - [ ] **Réglages / Preferences** — thème markdown, taille de police de l'éditeur, dossier par défaut.
 
 ## 🟢 Évolutions techniques / qualité
-- [ ] **Aucun test** — pas de dossier `Tests/` ni de target de test. `FrontmatterParser` et
-      `ConfigResolver` sont des fonctions pures faciles à couvrir (round-trip frontmatter,
-      résolution `{project-root}`, fallbacks `docs/`/`_bmad-output/`). Ajouter une target
-      `BmadBrowserTests` (XCTest/Swift Testing) dans `project.yml`.
-- [ ] **SwiftLint / swift-format** — aucun linter configuré ; ajouter `.swiftlint.yml` + phase build.
-- [ ] **Auto-update Sparkle** — cohérent avec les autres apps `~/DevApps` (voir `release.sh`
-      de MarkdownViewer). Permet de livrer les correctifs sans re-télécharger le DMG.
-- [ ] **Refactor recherche d'arbre** — `AppState.node(withID:)` et `AppState.findNode(url:in:)`
-      dupliquent une traversée récursive ; factoriser en une seule fonction générique.
+- [x] **Tests** — target `BmadBrowserTests` + scheme ; `FrontmatterParser` (round-trip, champs
+      scalaires) et `ConfigResolver` (détection, fallbacks, `{project-root}`) couverts (9 tests verts).
+- [x] **SwiftLint** — `.swiftlint.yml` + phase de build optionnelle (no-op si non installé).
+- [x] **Refactor recherche d'arbre** — `node(withID:)` et l'ancienne `findNode(url:in:)`
+      factorisées en `firstNode(in:where:)`.
+- [ ] **Auto-update Sparkle** — cohérent avec les autres apps `~/DevApps` ; reporté (touche la
+      release + clé EdDSA à ne jamais régénérer). À faire dans une passe distribution dédiée.
 - [ ] **Support multi-fenêtres** (`WindowGroup` + état par fenêtre) pour comparer deux projets.
 
 ## Test manuel restant
 - [ ] Lancer l'app et ouvrir un projet réel (ex: `~/Documents/GitHub/clarify`) pour valider l'UX
-- [ ] Vérifier le round-trip d'un `.md` à frontmatter riche (liste `inputDocuments`) avant/après `⌘S`
+- [x] Round-trip d'un `.md` à frontmatter riche (liste `inputDocuments`) — validé par test unitaire
