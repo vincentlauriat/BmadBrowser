@@ -138,7 +138,7 @@ final class AppState {
             let previouslySelected = selection?.url
             self.project = current
             tree = ProjectScanner.buildTree(at: current.outputURL)
-            if let url = previouslySelected, let node = findNode(url: url, in: tree) {
+            if let url = previouslySelected, let node = firstNode(in: tree, where: { $0.url == url }) {
                 select(node)
             }
         } else if let first = refreshed.projects.first {
@@ -335,22 +335,14 @@ final class AppState {
 
     /// Retrouve un nœud par son identifiant dans l'arbre complet.
     func node(withID id: DocumentNode.ID) -> DocumentNode? {
-        func search(_ nodes: [DocumentNode]) -> DocumentNode? {
-            for node in nodes {
-                if node.id == id { return node }
-                if let kids = node.children, let found = search(kids) { return found }
-            }
-            return nil
-        }
-        return search(tree)
+        firstNode(in: tree) { $0.id == id }
     }
 
-    private func findNode(url: URL, in nodes: [DocumentNode]) -> DocumentNode? {
+    /// Premier nœud (en profondeur) satisfaisant `predicate`.
+    private func firstNode(in nodes: [DocumentNode], where predicate: (DocumentNode) -> Bool) -> DocumentNode? {
         for node in nodes {
-            if node.url == url { return node }
-            if let kids = node.children, let found = findNode(url: url, in: kids) {
-                return found
-            }
+            if predicate(node) { return node }
+            if let kids = node.children, let found = firstNode(in: kids, where: predicate) { return found }
         }
         return nil
     }
