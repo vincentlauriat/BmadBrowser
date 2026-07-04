@@ -204,6 +204,22 @@ final class AppState {
 
     func markDirty() { isDirty = true }
 
+    /// Champs scalaires éditables du frontmatter du document markdown courant.
+    var frontmatterFields: [FrontmatterField] {
+        guard let raw = currentFrontmatter?.rawBlock else { return [] }
+        return FrontmatterParser.scalarFields(from: raw)
+    }
+
+    /// Applique les valeurs éditées au bloc frontmatter et marque le document modifié.
+    func applyFrontmatterEdits(_ fields: [FrontmatterField]) {
+        guard let raw = currentFrontmatter?.rawBlock else { return }
+        let newRaw = FrontmatterParser.applying(fields, to: raw)
+        guard newRaw != raw else { return }
+        let (parsed, _) = FrontmatterParser.parse(newRaw + "\n")
+        currentFrontmatter = parsed
+        markDirty()
+    }
+
     func save() {
         guard let node = selection else { return }
 
@@ -225,6 +241,11 @@ final class AppState {
         do {
             try content.write(to: node.url, atomically: true, encoding: .utf8)
             isDirty = false
+            // Rafraîchit le badge de statut de l'arbre si le frontmatter a changé.
+            if node.isMarkdown {
+                node.frontmatter = (currentFrontmatter?.isEmpty == false) ? currentFrontmatter : nil
+                tree = tree
+            }
         } catch {
             errorMessage = String(localized: "Save failed: \(error.localizedDescription)")
         }

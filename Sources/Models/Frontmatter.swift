@@ -17,3 +17,14 @@ struct Frontmatter: Equatable {
         status == nil && date == nil && workflowType == nil && stepsCompleted == nil
     }
 }
+
+/// Un champ scalaire éditable du frontmatter (`clé: valeur`), repéré par sa ligne
+/// dans le bloc brut. Les lignes non-scalaires (listes, blocs `|`/`>`) ne sont pas
+/// exposées ici et restent inchangées à la réécriture.
+struct FrontmatterField: Identifiable, Equatable {
+    let id = UUID()
+    let key: String
+    var value: String
+    let lineIndex: Int
+    let indent: String
+}

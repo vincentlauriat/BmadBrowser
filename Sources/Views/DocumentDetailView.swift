@@ -4,6 +4,7 @@ import MarkdownUI
 /// Colonne principale : rendu / édition du document sélectionné.
 struct DocumentDetailView: View {
     @Bindable var state: AppState
+    @State private var showFrontmatterSheet = false
 
     var body: some View {
         Group {
@@ -28,6 +29,11 @@ struct DocumentDetailView: View {
             }
         }
         .toolbar { toolbarContent }
+        .sheet(isPresented: $showFrontmatterSheet) {
+            FrontmatterEditorView(fields: state.frontmatterFields) { edited in
+                state.applyFrontmatterEdits(edited)
+            }
+        }
     }
 
     // MARK: - Markdown
@@ -129,7 +135,7 @@ struct DocumentDetailView: View {
         }
     }
 
-    // MARK: - Non markdown
+    // MARK: - Non markdown (placeholder, défini plus bas)
 
     private func nonMarkdownView(_ node: DocumentNode) -> some View {
         ContentUnavailableView {
@@ -149,6 +155,13 @@ struct DocumentDetailView: View {
             if let node = state.selection, node.isEditable {
                 if state.isDirty {
                     Text("• edited").font(.caption).foregroundStyle(.orange)
+                }
+                if node.isMarkdown, !state.frontmatterFields.isEmpty {
+                    Button {
+                        showFrontmatterSheet = true
+                    } label: {
+                        Label("Edit metadata", systemImage: "list.bullet.rectangle")
+                    }
                 }
                 Button {
                     if state.isEditing && state.isDirty { state.save() }
@@ -172,5 +185,59 @@ struct DocumentDetailView: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Éditeur de frontmatter (formulaire)
+
+/// Feuille d'édition des champs scalaires du frontmatter. Les valeurs éditées sont
+/// renvoyées via `onApply` ; les lignes non-scalaires du bloc restent intactes.
+struct FrontmatterEditorView: View {
+    let onApply: ([FrontmatterField]) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var fields: [FrontmatterField]
+
+    init(fields: [FrontmatterField], onApply: @escaping ([FrontmatterField]) -> Void) {
+        self.onApply = onApply
+        _fields = State(initialValue: fields)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Edit frontmatter")
+                .font(.headline)
+                .padding()
+            Divider()
+            if fields.isEmpty {
+                ContentUnavailableView(
+                    "No editable field",
+                    systemImage: "list.bullet.rectangle",
+                    description: Text("This document has no scalar frontmatter key.")
+                )
+                .frame(minHeight: 120)
+            } else {
+                Form {
+                    ForEach($fields) { $field in
+                        LabeledContent(field.key) {
+                            TextField("", text: $field.value)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                    }
+                }
+                .formStyle(.grouped)
+            }
+            Divider()
+            HStack {
+                Spacer()
+                Button("Cancel", role: .cancel) { dismiss() }
+                Button("Apply") {
+                    onApply(fields)
+                    dismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+            .padding()
+        }
+        .frame(width: 420, height: 360)
     }
 }
