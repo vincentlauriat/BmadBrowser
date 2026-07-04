@@ -21,7 +21,7 @@ final class DocumentNode: Identifiable, Hashable {
     }
 
     var isImage: Bool {
-        ["png", "jpg", "jpeg", "gif", "webp", "bmp", "tiff", "heic"].contains(url.pathExtension.lowercased())
+        ["png", "jpg", "jpeg", "gif", "webp", "bmp", "tiff", "heic", "svg"].contains(url.pathExtension.lowercased())
     }
 
     var isPDF: Bool {
@@ -45,7 +45,7 @@ final class DocumentNode: Identifiable, Hashable {
         case "txt": return "doc.plaintext"
         case "xlsx", "csv": return "tablecells"
         case "pptx", "key": return "rectangle.on.rectangle"
-        case "png", "jpg", "jpeg", "gif", "webp", "pdf": return "photo"
+        case "png", "jpg", "jpeg", "gif", "webp", "svg", "pdf": return "photo"
         default: return "doc"
         }
     }

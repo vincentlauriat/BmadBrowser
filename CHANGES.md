@@ -1,5 +1,43 @@
 # CHANGES — BmadBrowser
 
+## 2026-07-04 (audit code v1.0.0 → corrections & confort)
+
+### Fixed
+- **Sauvegarde markdown non destructive** : `save()` réécrit le bloc frontmatter **brut d'origine**
+  (`Frontmatter.rawBlock`) au lieu de le reconstruire depuis un dictionnaire non ordonné —
+  l'ordre des clés YAML, les listes (`inputDocuments`) et les valeurs multi-lignes sont préservés.
+- **Perte silencieuse des modifications** : dialogue de confirmation « Save / Discard / Cancel »
+  (`AppState.guardUnsaved`) avant tout changement de document ou de projet en mode édition.
+- **Message d'erreur** de lecture français codé en dur → `String(localized:)`.
+- **Badge de statut de l'arbre** rafraîchi après édition/sauvegarde du frontmatter.
+- **Fuite d'accès security-scoped** : `BookmarkStore` ne conserve qu'un seul accès actif
+  (`beginAccess`/`stopCurrentAccess`), libéré avant d'en ouvrir un nouveau.
+
+### Added
+- **Recherche plein-texte** : la recherche filtre désormais sur le nom **et** le contenu des
+  fichiers texte (mise en cache par projet).
+- **Filtre par statut** de frontmatter (menu dans la colonne documents).
+- **Édition du frontmatter en formulaire** (feuille « Edit metadata ») : les champs scalaires
+  `clé: valeur` sont éditables ; seules leurs lignes sont réécrites (listes/blocs intacts).
+- **Menu contextuel** sur les nœuds : Révéler dans le Finder, Copier le chemin, Ouvrir.
+- **Compteur de mots + temps de lecture** sous l'aperçu markdown.
+- **Projets récents** : le bouton « Open » devient un menu avec une section Recent
+  (security-scoped bookmarks, 8 max, dédup par chemin) + Clear Recents.
+- **Rendu SVG** inline dans la visionneuse d'image.
+- **Rafraîchissement automatique** via FSEvents (`FolderWatcher`), sans écraser une édition en cours.
+- **Tests unitaires** : target `BmadBrowserTests` + scheme ; `FrontmatterParser` (round-trip,
+  champs scalaires) et `ConfigResolver` (détection, fallbacks, `{project-root}`) — 9 tests verts.
+- **SwiftLint** : `.swiftlint.yml` + phase de build optionnelle (no-op si non installé).
+
+### Changed
+- Traversées d'arbre dupliquées (`node(withID:)`, `findNode(url:in:)`) factorisées en
+  `firstNode(in:where:)`.
+
+### Docs
+- **Audit complet du code source** (17 fichiers Swift) consigné dans `TODOS.md` (backlog priorisé
+  🔴/🟠/🟢) ; items traités cochés, reste (outline, coloration syntaxique, export, préférences,
+  Sparkle, multi-fenêtres) marqué reporté avec justification.
+
 ## 2026-07-04 (i18n, v1.0.0, distribution & site)
 
 ### Added

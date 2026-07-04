@@ -43,22 +43,28 @@ Sources/
     WorkspaceScanner.swift    # découvre les projets sous une racine
     ProjectScanner.swift      # construit l'arbre de documents d'un projet
     ConfigResolver.swift      # résout le dossier de sortie BMad + détection projet
-    FrontmatterParser.swift   # extrait le bloc YAML --- ... ---
-    BookmarkStore.swift       # persiste l'accès à la racine du workspace
+    FrontmatterParser.swift   # extrait / réécrit le bloc YAML --- ... ---, champs scalaires
+    BookmarkStore.swift       # persiste l'accès à la racine (un seul accès scoped actif)
+    RecentsStore.swift        # racines récemment ouvertes (bookmarks scoped par entrée)
+    FolderWatcher.swift       # surveillance FSEvents pour le rafraîchissement auto
   ViewModels/
     AppState.swift            # @Observable, source unique de l'état UI
   Views/
-    ContentView.swift         # NavigationSplitView à 3 colonnes
+    ContentView.swift         # NavigationSplitView 3 colonnes + Open Recent + dialogue non sauvegardé
     ProjectListView.swift     # colonne 1 : projets du workspace
-    DocumentTreeView.swift    # colonne 2 : arbre des documents + badges de statut
-    DocumentDetailView.swift  # colonne 3 : rendu markdown / éditeur + Cmd+S
-    MediaViews.swift          # ImageViewer (zoom) + PDFViewer
+    DocumentTreeView.swift    # colonne 2 : arbre + badges, filtre, menu contextuel
+    DocumentDetailView.swift  # colonne 3 : rendu markdown / éditeur + Cmd+S + FrontmatterEditorView
+    MediaViews.swift          # ImageViewer (zoom, SVG) + PDFViewer
 Resources/                    # entitlements, catalogue d'assets
   Localizable.xcstrings        # String Catalog : base anglaise + traductions françaises
+Tests/
+  FrontmatterParserTests.swift # round-trip + édition des champs scalaires
+  ConfigResolverTests.swift    # détection projet + fallbacks du dossier de sortie
 Scripts/
   release.sh                   # build Release, signature Developer ID, notarisation, packaging DMG
 docs/
   index.html                   # landing page bilingue (GitHub Pages)
+.swiftlint.yml                 # config SwiftLint (phase de build optionnelle)
 ```
 
 ## 4. Diagramme des composants
@@ -140,14 +146,25 @@ Flux principaux :
 - **Sélectionner un document** — `select(_:)` charge le markdown (en séparant
   frontmatter et corps), charge le contenu brut des fichiers texte
   (yaml/json/…), ou laisse le corps vide pour les médias rendus par la vue détail.
-- **Éditer & sauvegarder** — l'éditeur bascule `isEditing` ; `markDirty()` suit
-  les modifications non sauvegardées ; `save()` réécrit le markdown (frontmatter
-  reconstruit + corps) ou le texte brut sur disque (`⌘S`), selon le type de
-  fichier.
-- **Recharger** — `reload()` re-scanne la racine du workspace (détecte les projets
-  ajoutés/supprimés), conserve le projet courant (apparié par `rootURL`) et
-  re-sélectionne le document précédemment ouvert s'il est toujours présent.
-- **Filtrer** — `filteredTree` filtre l'arbre par nom de fichier depuis `searchText`.
+- **Éditer & sauvegarder** — l'éditeur bascule `isEditing` ; `markDirty()` suit les
+  modifications ; `save()` réécrit le markdown en **`frontmatter.rawBlock` + corps**
+  (le bloc YAML d'origine, tel quel) ou le texte brut sur disque (`⌘S`). Il ne
+  reconstruit jamais le bloc depuis un dictionnaire non ordonné : l'ordre des clés
+  et les listes YAML sont préservés. Après sauvegarde d'un markdown, le frontmatter
+  du nœud est rafraîchi pour garder le badge de l'arbre à jour.
+- **Formulaire frontmatter** — `frontmatterFields` expose les lignes scalaires
+  `clé: valeur` ; `applyFrontmatterEdits(_:)` ne réécrit que ces lignes dans
+  `rawBlock`, laissant listes/blocs intacts (feuille `FrontmatterEditorView`).
+- **Garde des modifications** — `guardUnsaved(_:)` intercepte les changements de
+  document/projet quand `isDirty` et diffère l'action derrière un dialogue
+  Save / Discard / Cancel.
+- **Recharger & rafraîchir** — `reload()` re-scanne la racine, conserve le projet
+  courant et re-sélectionne le document ouvert. `FolderWatcher` (FSEvents) déclenche
+  `autoReloadIfSafe()`, qui saute le reload pendant une édition pour ne pas l'écraser.
+- **Rechercher & filtrer** — `filteredTree` filtre par **nom et contenu** (mis en
+  cache) depuis `searchText`, et par `statusFilter` (statut du frontmatter).
+- **Racines récentes** — `RecentsStore` garde jusqu'à 8 racines récentes en bookmarks
+  scoped ; `openRecent(_:)` en résout et rouvre une.
 
 ## 8. Disposition de l'interface
 

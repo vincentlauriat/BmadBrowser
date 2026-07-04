@@ -15,6 +15,15 @@ targets:
   BmadBrowser:
     type: application
     platform: macOS
+    preBuildScripts:
+      - name: SwiftLint
+        basedOnDependencyAnalysis: false
+        script: |
+          if which swiftlint >/dev/null; then
+            swiftlint
+          else
+            echo "warning: SwiftLint not installed — brew install swiftlint to enable linting"
+          fi
     sources:
       - path: Sources
       - path: Resources/Assets.xcassets
@@ -35,3 +44,25 @@ targets:
         SWIFT_VERSION: "5.0"
         ENABLE_HARDENED_RUNTIME: YES
         DEAD_CODE_STRIPPING: YES
+
+  BmadBrowserTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: BmadBrowser
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.vincentlauriat.BmadBrowserTests
+        SWIFT_VERSION: "5.0"
+
+schemes:
+  BmadBrowser:
+    build:
+      targets:
+        BmadBrowser: all
+    test:
+      targets:
+        - BmadBrowserTests

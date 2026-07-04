@@ -43,22 +43,28 @@ Sources/
     WorkspaceScanner.swift    # discovers projects under a root
     ProjectScanner.swift      # builds the document tree of a project
     ConfigResolver.swift      # resolves the BMad output folder + project detection
-    FrontmatterParser.swift   # extracts the --- ... --- YAML block
-    BookmarkStore.swift       # persists access to the workspace root
+    FrontmatterParser.swift   # extracts / rewrites the --- ... --- YAML block, scalar fields
+    BookmarkStore.swift       # persists access to the workspace root (single scoped access)
+    RecentsStore.swift        # recently opened roots (per-entry scoped bookmarks)
+    FolderWatcher.swift       # FSEvents watcher for auto-refresh
   ViewModels/
     AppState.swift            # @Observable single source of UI state
   Views/
-    ContentView.swift         # 3-column NavigationSplitView
+    ContentView.swift         # 3-column NavigationSplitView + Open Recent + unsaved dialog
     ProjectListView.swift     # column 1: projects of the workspace
-    DocumentTreeView.swift    # column 2: document tree + status badges
-    DocumentDetailView.swift  # column 3: markdown render / editor + Cmd+S
-    MediaViews.swift          # ImageViewer (zoom) + PDFViewer
+    DocumentTreeView.swift    # column 2: document tree + status badges, filter, context menu
+    DocumentDetailView.swift  # column 3: markdown render / editor + Cmd+S + FrontmatterEditorView
+    MediaViews.swift          # ImageViewer (zoom, SVG) + PDFViewer
 Resources/                    # entitlements, asset catalog
   Localizable.xcstrings        # String Catalog: English base + French translations
+Tests/
+  FrontmatterParserTests.swift # round-trip + scalar-field editing
+  ConfigResolverTests.swift    # project detection + output-folder fallbacks
 Scripts/
   release.sh                   # Release build, Developer ID signing, notarization, DMG packaging
 docs/
   index.html                   # bilingual landing page (GitHub Pages)
+.swiftlint.yml                 # SwiftLint config (optional pre-build phase)
 ```
 
 ## 4. Component diagram
@@ -140,12 +146,24 @@ Main flows:
   body), loads the raw content of text files (yaml/json/…), or leaves the body
   empty for media files rendered by the detail view.
 - **Edit & save** — the editor toggles `isEditing`; `markDirty()` tracks unsaved
-  changes; `save()` writes markdown (frontmatter rebuilt + body) or the raw text
-  back to disk (`⌘S`), depending on the file type.
-- **Reload** — `reload()` re-scans the workspace root (picks up added/removed
-  projects), keeps the current project (matched by `rootURL`) and re-selects the
-  previously open document when still present.
-- **Filter** — `filteredTree` filters the tree by file name from `searchText`.
+  changes; `save()` writes markdown as **`frontmatter.rawBlock` + body** (the
+  original YAML block, verbatim) or the raw text back to disk (`⌘S`). It never
+  rebuilds the block from an unordered dict, so key order and YAML lists survive.
+  After saving markdown the node's frontmatter is refreshed so the tree badge stays
+  in sync.
+- **Frontmatter form** — `frontmatterFields` exposes the scalar `key: value` lines;
+  `applyFrontmatterEdits(_:)` rewrites only those lines in `rawBlock`, leaving
+  lists/blocks untouched (`FrontmatterEditorView` sheet).
+- **Unsaved guard** — `guardUnsaved(_:)` intercepts document/project switches while
+  dirty and defers the action behind a Save / Discard / Cancel dialog.
+- **Reload & auto-refresh** — `reload()` re-scans the workspace root, keeps the
+  current project and re-selects the previously open document. `FolderWatcher`
+  (FSEvents) triggers `autoReloadIfSafe()`, which skips the reload while editing so
+  in-progress edits are never clobbered.
+- **Search & filter** — `filteredTree` filters by file **name and content**
+  (cached) from `searchText`, and by `statusFilter` (frontmatter status).
+- **Recent roots** — `RecentsStore` keeps up to 8 recently opened roots as scoped
+  bookmarks; `openRecent(_:)` resolves and reopens one.
 
 ## 8. UI layout
 

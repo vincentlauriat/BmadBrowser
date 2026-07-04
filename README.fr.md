@@ -24,8 +24,15 @@ Outil macOS natif (SwiftUI) pour **naviguer et éditer** les documents produits 
 | ✅ | Affichage et édition des fichiers texte (`yaml`, `json`, `txt`, `csv`, `toml`) en monospace |
 | ✅ | Rendu markdown riche (MarkdownUI) + sélection de texte |
 | ✅ | Frontmatter YAML affiché en badges (statut, type, date) |
-| ✅ | Édition + sauvegarde (`⌘S`) avec indicateur « modifié » |
-| ✅ | Filtre/recherche par nom dans la barre latérale |
+| ✅ | Édition + sauvegarde (`⌘S`) avec indicateur « modifié » ; confirmation avant perte de modifs |
+| ✅ | Sauvegarde préservant le frontmatter : le bloc YAML d'origine est réécrit tel quel (ordre des clés & listes intacts) |
+| ✅ | Édition du frontmatter en formulaire (« Edit metadata ») |
+| ✅ | Recherche plein-texte (nom **et** contenu) + filtre par statut |
+| ✅ | Menu contextuel : révéler dans le Finder, copier le chemin, ouvrir |
+| ✅ | Compteur de mots + temps de lecture sous l'aperçu markdown |
+| ✅ | Aperçu inline images (zoom), SVG et PDF |
+| ✅ | Rafraîchissement auto sur changement de fichiers (FSEvents) |
+| ✅ | Menu des racines récentes |
 | ✅ | Persistance du dernier projet ouvert (security-scoped bookmark) |
 | ✅ | Ouverture externe des fichiers non-markdown |
 | ✅ | Interface bilingue (anglais / français), suit la langue du système |
@@ -61,10 +68,11 @@ project.yml              # définition XcodeGen (source de vérité du projet)
 Sources/
   BmadBrowserApp.swift   # point d'entrée @main
   Models/                # Workspace, BmadProject, DocumentNode, Frontmatter
-  Services/              # WorkspaceScanner, ConfigResolver, ProjectScanner, FrontmatterParser, BookmarkStore
+  Services/              # WorkspaceScanner, ConfigResolver, ProjectScanner, FrontmatterParser, BookmarkStore, RecentsStore, FolderWatcher
   ViewModels/AppState.swift
   Views/                 # ContentView, ProjectListView, DocumentTreeView, DocumentDetailView, MediaViews
 Resources/               # entitlements, assets, Localizable.xcstrings (base EN + traductions FR)
+Tests/                   # FrontmatterParserTests, ConfigResolverTests
 Scripts/
   release.sh             # build Release, signature Developer ID, notarisation, packaging DMG
 docs/
@@ -73,13 +81,16 @@ docs/
 
 ## Roadmap
 
-- [x] Aperçu des images / PDF intégré
+- [x] Aperçu des images / PDF / SVG intégré
 - [x] Niveau supérieur : workspace multi-projets
 - [x] Interface bilingue (anglais / français)
-- [ ] Recherche plein-texte (dans le contenu, pas seulement les noms)
-- [ ] Filtres par statut / type de workflow
-- [ ] Édition du frontmatter en formulaire
-- [ ] Workspaces / projets récents
+- [x] Recherche plein-texte (dans le contenu, pas seulement les noms)
+- [x] Filtres par statut
+- [x] Édition du frontmatter en formulaire
+- [x] Workspaces / projets récents
+- [x] Rafraîchissement auto sur changement de fichiers (FSEvents)
+- [ ] Outline markdown, coloration syntaxique, export PDF/HTML, préférences
+- [ ] Auto-update Sparkle, multi-fenêtres
 
 > Voir `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) pour la conception détaillée,
 > `PLAN.md` pour le découpage des phases et `TODOS.md` pour l'avancement.

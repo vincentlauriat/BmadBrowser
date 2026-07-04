@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 /// Colonne latérale : arbre des documents avec badges de statut.
 struct DocumentTreeView: View {
@@ -10,7 +11,7 @@ struct DocumentTreeView: View {
             get: { state.selection?.id },
             set: { newID in
                 if let id = newID, let node = state.node(withID: id) {
-                    state.select(node)
+                    state.guardUnsaved { state.select(node) }
                 }
             }
         )
@@ -39,12 +40,58 @@ struct DocumentTreeView: View {
                     List(state.filteredTree, children: \.children, selection: selectionBinding) { node in
                         NodeRow(node: node)
                             .tag(node.id)
+                            .contextMenu { nodeMenu(node) }
                     }
                     .listStyle(.sidebar)
                 }
             }
         }
-        .searchable(text: $state.searchText, placement: .sidebar, prompt: "Filter documents")
+        .searchable(text: $state.searchText, placement: .sidebar, prompt: "Search name or content")
+        .toolbar { statusFilterMenu }
+    }
+
+    /// Menu de filtrage par statut de frontmatter (visible s'il existe des statuts).
+    @ToolbarContentBuilder
+    private var statusFilterMenu: some ToolbarContent {
+        ToolbarItem {
+            let statuses = state.availableStatuses
+            if !statuses.isEmpty {
+                Menu {
+                    Button("All statuses") { state.statusFilter = nil }
+                    Divider()
+                    ForEach(statuses, id: \.self) { status in
+                        Button {
+                            state.statusFilter = (state.statusFilter == status) ? nil : status
+                        } label: {
+                            if state.statusFilter == status {
+                                Label(status, systemImage: "checkmark")
+                            } else {
+                                Text(status)
+                            }
+                        }
+                    }
+                } label: {
+                    Label("Filter by status", systemImage: state.statusFilter == nil
+                          ? "line.3.horizontal.decrease.circle"
+                          : "line.3.horizontal.decrease.circle.fill")
+                }
+            }
+        }
+    }
+
+    /// Menu contextuel d'un nœud de l'arbre.
+    @ViewBuilder
+    private func nodeMenu(_ node: DocumentNode) -> some View {
+        Button("Reveal in Finder") {
+            NSWorkspace.shared.activateFileViewerSelecting([node.url])
+        }
+        Button("Copy Path") {
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(node.url.path(percentEncoded: false), forType: .string)
+        }
+        if !node.isDirectory {
+            Button("Open in Default App") { NSWorkspace.shared.open(node.url) }
+        }
     }
 }
 

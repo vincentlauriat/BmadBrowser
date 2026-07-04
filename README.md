@@ -24,8 +24,15 @@ Native macOS (SwiftUI) app to **browse and edit** the documents produced by the 
 | ✅ | Viewing and editing of text files (`yaml`, `json`, `txt`, `csv`, `toml`) in monospace |
 | ✅ | Rich markdown rendering (MarkdownUI) + text selection |
 | ✅ | YAML frontmatter shown as badges (status, type, date) |
-| ✅ | Editing + saving (`⌘S`) with a "modified" indicator |
-| ✅ | Filter/search by name in the sidebar |
+| ✅ | Editing + saving (`⌘S`) with a "modified" indicator; unsaved-changes confirmation |
+| ✅ | Frontmatter-safe saving: the original YAML block is preserved verbatim (key order & lists intact) |
+| ✅ | Frontmatter editing as a form ("Edit metadata") |
+| ✅ | Full-text search (name **and** content) + filter by status |
+| ✅ | Context menu: reveal in Finder, copy path, open in default app |
+| ✅ | Word count + reading time under the markdown preview |
+| ✅ | Inline image (zoom), SVG and PDF preview |
+| ✅ | Auto-refresh on external file changes (FSEvents) |
+| ✅ | Recent roots menu |
 | ✅ | Persistence of the last opened project (security-scoped bookmark) |
 | ✅ | External opening of non-markdown files |
 | ✅ | Bilingual UI (English / French), follows the system language |
@@ -61,10 +68,11 @@ project.yml              # XcodeGen definition (source of truth of the project)
 Sources/
   BmadBrowserApp.swift   # @main entry point
   Models/                # Workspace, BmadProject, DocumentNode, Frontmatter
-  Services/              # WorkspaceScanner, ConfigResolver, ProjectScanner, FrontmatterParser, BookmarkStore
+  Services/              # WorkspaceScanner, ConfigResolver, ProjectScanner, FrontmatterParser, BookmarkStore, RecentsStore, FolderWatcher
   ViewModels/AppState.swift
   Views/                 # ContentView, ProjectListView, DocumentTreeView, DocumentDetailView, MediaViews
 Resources/               # entitlements, assets, Localizable.xcstrings (EN base + FR translations)
+Tests/                   # FrontmatterParserTests, ConfigResolverTests
 Scripts/
   release.sh             # Release build, Developer ID signing, notarization, DMG packaging
 docs/
@@ -73,13 +81,16 @@ docs/
 
 ## Roadmap
 
-- [x] Built-in image / PDF preview
+- [x] Built-in image / PDF / SVG preview
 - [x] Top level: multi-project workspace
 - [x] Bilingual UI (English / French)
-- [ ] Full-text search (content, not just names)
-- [ ] Filters by status / workflow type
-- [ ] Frontmatter editing as a form
-- [ ] Recent workspaces / projects
+- [x] Full-text search (content, not just names)
+- [x] Filters by status
+- [x] Frontmatter editing as a form
+- [x] Recent workspaces / projects
+- [x] Auto-refresh on file changes (FSEvents)
+- [ ] Markdown outline, syntax highlighting, PDF/HTML export, preferences
+- [ ] Sparkle auto-update, multi-window
 
 > See `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) for the detailed design,
 > `PLAN.md` for the phase breakdown and `TODOS.md` for progress.
