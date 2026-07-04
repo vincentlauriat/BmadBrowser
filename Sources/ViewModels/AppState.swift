@@ -25,6 +25,9 @@ final class AppState {
     /// Cache du contenu des fichiers texte pour la recherche plein-texte (vidé au changement de projet).
     private var contentCache: [URL: String] = [:]
 
+    /// Surveillance FSEvents de la racine pour le rafraîchissement automatique.
+    private var watcher: FolderWatcher?
+
     /// Dialogue « modifications non enregistrées » affiché avant une navigation destructive.
     var showUnsavedDialog = false
     /// Action à exécuter une fois le sort des modifications en cours tranché.
@@ -74,12 +77,28 @@ final class AppState {
             RecentsStore.add(rootURL)
         }
 
+        startWatching(rootURL)
+
         if let first = workspace.projects.first {
             selectProject(first)
         } else {
             clearProject()
             errorMessage = String(localized: "No BMad project found under this folder (no _bmad/, docs/, or _bmad-output/).")
         }
+    }
+
+    /// (Re)démarre la surveillance FSEvents de la racine du workspace.
+    private func startWatching(_ url: URL) {
+        watcher?.stop()
+        watcher = FolderWatcher(url: url) { [weak self] in
+            self?.autoReloadIfSafe()
+        }
+    }
+
+    /// Recharge automatiquement, sauf si une édition est en cours (pour ne pas l'écraser).
+    private func autoReloadIfSafe() {
+        guard !isDirty, !isEditing else { return }
+        reload()
     }
 
     /// Sélectionne un projet du workspace et charge son arbre de documents.
