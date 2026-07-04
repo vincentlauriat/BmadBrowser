@@ -17,5 +17,9 @@ struct BmadBrowserApp: App {
                 .keyboardShortcut("o", modifiers: .command)
             }
         }
+
+        Settings {
+            SettingsView()
+        }
     }
 }

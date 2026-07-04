@@ -1,10 +1,24 @@
 import SwiftUI
 import MarkdownUI
+import AppKit
+import UniformTypeIdentifiers
 
 /// Colonne principale : rendu / édition du document sélectionné.
 struct DocumentDetailView: View {
     @Bindable var state: AppState
     @State private var showFrontmatterSheet = false
+
+    @AppStorage(SettingsKeys.editorFontSize) private var editorFontSize: Double = 13
+    @AppStorage(SettingsKeys.markdownTheme) private var markdownTheme: String = MarkdownThemeChoice.gitHub.rawValue
+    @AppStorage(SettingsKeys.showDocumentStats) private var showDocumentStats: Bool = true
+
+    private var selectedTheme: Theme {
+        (MarkdownThemeChoice(rawValue: markdownTheme) ?? .gitHub).theme
+    }
+
+    private var editorFont: Font {
+        .system(size: editorFontSize, design: .monospaced)
+    }
 
     var body: some View {
         Group {
@@ -47,19 +61,21 @@ struct DocumentDetailView: View {
                     get: { state.documentBody },
                     set: { state.documentBody = $0; state.markDirty() }
                 ))
-                .font(.system(.body, design: .monospaced))
+                .font(editorFont)
                 .padding(8)
             } else {
                 ScrollView {
                     Markdown(state.documentBody)
-                        .markdownTheme(.gitHub)
+                        .markdownTheme(selectedTheme)
                         .markdownImageProvider(LocalImageProvider(baseURL: node.url.deletingLastPathComponent()))
                         .textSelection(.enabled)
                         .padding(20)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                Divider()
-                statsBar
+                if showDocumentStats {
+                    Divider()
+                    statsBar
+                }
             }
         }
     }
@@ -121,12 +137,11 @@ struct DocumentDetailView: View {
                     get: { state.documentBody },
                     set: { state.documentBody = $0; state.markDirty() }
                 ))
-                .font(.system(.body, design: .monospaced))
+                .font(editorFont)
                 .padding(8)
             } else {
                 ScrollView([.vertical, .horizontal]) {
-                    Text(state.documentBody)
-                        .font(.system(.body, design: .monospaced))
+                    SyntaxHighlightedText(text: state.documentBody, ext: node.url.pathExtension, fontSize: editorFontSize)
                         .textSelection(.enabled)
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -147,6 +162,25 @@ struct DocumentDetailView: View {
         }
     }
 
+    // MARK: - Export PDF
+
+    private func exportPDF(_ node: DocumentNode) {
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [.pdf]
+        panel.nameFieldStringValue = node.url.deletingPathExtension().lastPathComponent + ".pdf"
+        panel.canCreateDirectories = true
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        let ok = MarkdownPDFExporter.export(
+            body: state.documentBody,
+            theme: selectedTheme,
+            baseURL: node.url.deletingLastPathComponent(),
+            to: url
+        )
+        if !ok {
+            state.errorMessage = String(localized: "PDF export failed.")
+        }
+    }
+
     // MARK: - Toolbar
 
     @ToolbarContentBuilder
@@ -161,6 +195,13 @@ struct DocumentDetailView: View {
                         showFrontmatterSheet = true
                     } label: {
                         Label("Edit metadata", systemImage: "list.bullet.rectangle")
+                    }
+                }
+                if node.isMarkdown {
+                    Button {
+                        exportPDF(node)
+                    } label: {
+                        Label("Export PDF", systemImage: "arrow.down.doc")
                     }
                 }
                 Button {
