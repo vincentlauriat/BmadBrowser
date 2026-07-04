@@ -18,7 +18,12 @@ final class AppState {
     var isEditing = false
     var isDirty = false
     var searchText = ""
+    /// Filtre optionnel par statut de frontmatter (nil = tous).
+    var statusFilter: String?
     var errorMessage: String?
+
+    /// Cache du contenu des fichiers texte pour la recherche plein-texte (vidé au changement de projet).
+    private var contentCache: [URL: String] = [:]
 
     /// Dialogue « modifications non enregistrées » affiché avant une navigation destructive.
     var showUnsavedDialog = false
@@ -71,6 +76,8 @@ final class AppState {
         self.currentFrontmatter = nil
         self.isEditing = false
         self.isDirty = false
+        self.statusFilter = nil
+        self.contentCache.removeAll()
     }
 
     /// Réinitialise l'état lié au projet courant (workspace vide).
@@ -86,6 +93,7 @@ final class AppState {
 
     func reload() {
         guard let workspace else { return }
+        contentCache.removeAll()
         // Re-scanne la racine pour détecter les projets ajoutés/supprimés.
         let refreshed = WorkspaceScanner.scan(rootURL: workspace.rootURL)
         self.workspace = refreshed
@@ -212,24 +220,58 @@ final class AppState {
         NSWorkspace.shared.open(node.url)
     }
 
-    // MARK: - Recherche
+    // MARK: - Recherche & filtres
 
-    /// Arbre filtré par `searchText` (sur les noms de fichiers).
-    var filteredTree: [DocumentNode] {
-        guard !searchText.isEmpty else { return tree }
-        return filter(nodes: tree, query: searchText.lowercased())
+    /// Statuts distincts présents dans l'arbre courant (pour le menu de filtre).
+    var availableStatuses: [String] {
+        var seen = Set<String>()
+        var result: [String] = []
+        func walk(_ nodes: [DocumentNode]) {
+            for node in nodes {
+                if let s = node.frontmatter?.status, seen.insert(s).inserted { result.append(s) }
+                if let kids = node.children { walk(kids) }
+            }
+        }
+        walk(tree)
+        return result.sorted { $0.localizedStandardCompare($1) == .orderedAscending }
     }
 
-    private func filter(nodes: [DocumentNode], query: String) -> [DocumentNode] {
+    /// Arbre filtré par `searchText` (nom **et** contenu) et par `statusFilter`.
+    var filteredTree: [DocumentNode] {
+        let query = searchText.lowercased()
+        let hasQuery = !query.isEmpty
+        let hasStatus = statusFilter != nil
+        guard hasQuery || hasStatus else { return tree }
+        return filter(nodes: tree) { node in
+            (!hasQuery || self.matches(node, query: query)) &&
+            (!hasStatus || node.frontmatter?.status == self.statusFilter)
+        }
+    }
+
+    /// Un fichier correspond si son nom ou son contenu texte contient la requête.
+    private func matches(_ node: DocumentNode, query: String) -> Bool {
+        if node.name.lowercased().contains(query) { return true }
+        guard node.isEditable else { return false }
+        return content(of: node.url).contains(query)
+    }
+
+    /// Contenu (minuscule) du fichier, mis en cache pour la recherche.
+    private func content(of url: URL) -> String {
+        if let cached = contentCache[url] { return cached }
+        let text = (try? String(contentsOf: url, encoding: .utf8))?.lowercased() ?? ""
+        contentCache[url] = text
+        return text
+    }
+
+    private func filter(nodes: [DocumentNode], predicate: (DocumentNode) -> Bool) -> [DocumentNode] {
         var result: [DocumentNode] = []
         for node in nodes {
             if node.isDirectory {
-                let kids = filter(nodes: node.children ?? [], query: query)
+                let kids = filter(nodes: node.children ?? [], predicate: predicate)
                 if !kids.isEmpty {
-                    let copy = DocumentNode(url: node.url, isDirectory: true, children: kids)
-                    result.append(copy)
+                    result.append(DocumentNode(url: node.url, isDirectory: true, children: kids))
                 }
-            } else if node.name.lowercased().contains(query) {
+            } else if predicate(node) {
                 result.append(node)
             }
         }

@@ -52,8 +52,26 @@ struct DocumentDetailView: View {
                         .padding(20)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                Divider()
+                statsBar
             }
         }
+    }
+
+    /// Barre de statistiques du document markdown : nombre de mots + temps de lecture.
+    private var statsBar: some View {
+        let words = state.documentBody.split { $0.isWhitespace || $0.isNewline }.count
+        let minutes = max(1, Int((Double(words) / 200.0).rounded()))
+        return HStack(spacing: 12) {
+            Label("\(words) words", systemImage: "text.word.spacing")
+            Label("\(minutes) min read", systemImage: "clock")
+            Spacer()
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 6)
+        .background(.quaternary.opacity(0.4))
     }
 
     @ViewBuilder
