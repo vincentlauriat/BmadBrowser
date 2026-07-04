@@ -1,7 +1,7 @@
 ---
 project: BmadBrowser
-last_updated: 2026-06-29
-phase: "MVP + workspace multi-projets + icône + fichiers texte — build vert, publié sur GitHub (privé)"
+last_updated: 2026-07-04
+phase: "v1.0.0 publique, bilingue EN/FR, DMG notarisé, repo public + site — build vert"
 ---
 
 # MEMORY — BmadBrowser
@@ -17,7 +17,10 @@ Outil macOS natif (SwiftUI) pour naviguer **et éditer** les documents markdown 
 - **Niveau supérieur (workspace)** : la racine ouverte peut regrouper plusieurs projets. `WorkspaceScanner` scanne les sous-dossiers directs ; un dossier est un projet s'il contient `_bmad/`, `docs/` ou `_bmad-output/`. Si la racine est elle-même un projet → mode mono-projet. UI 3 colonnes (Projets | Documents | Détail). Le bookmark persiste la racine du workspace, pas un projet isolé.
 - **Fichiers texte** : les non-markdown texte (`yaml`, `yml`, `json`, `txt`, `csv`, `toml`) sont affichés/édités en monospace (`DocumentNode.isText`/`isEditable`), chargement/écriture brute (pas de frontmatter). Les autres binaires → ouverture externe.
 - **AppIcon** : générée par un script Swift (AppKit/CoreGraphics), `Resources/Assets.xcassets/AppIcon.appiconset`. Script source : `scratchpad/gen_icon.swift` (hors repo) — à regénérer si le design change.
-- **Dépôt** : `github.com/vincentlauriat/BmadBrowser` (privé), licence MIT. Workflow git : feature branch → merge → suppression (jamais de push direct sur `main`).
+- **Internationalisation (i18n)** : app bilingue EN/FR suivant la langue système. Langue de base = **anglais** (clés littérales dans le code UI) ; traductions françaises fournies par le String Catalog `Resources/Localizable.xcstrings` (compilé en `en.lproj`/`fr.lproj`, pluriels gérés). `project.yml` : `options.developmentLanguage: en` + catalogue sous `sources:`. Les strings non-SwiftUI (erreurs `AppState`, `NSOpenPanel`) utilisent `String(localized:)`.
+- **Distribution** : `Scripts/release.sh <version>` automatise build Release + signature Developer ID (Hardened Runtime) + notarisation Apple (profil trousseau partagé `AppliMacVincentGithub`) + staple + packaging DMG (`release/BmadBrowser-<version>.dmg`). `MARKETING_VERSION` bumpé à **`1.0.0`** (première version publique).
+- **Dépôt** : `github.com/vincentlauriat/BmadBrowser`, désormais **public**, licence MIT. Workflow git : feature branch → merge → suppression (jamais de push direct sur `main`). GitHub Release v1.0.0 avec DMG notarisé.
+- **Site** : landing page bilingue `docs/index.html` servie via **GitHub Pages** (`vincentlauriat.github.io/BmadBrowser`) ; app référencée sur le portfolio github.io et sur lauriat.fr.
 
 ## Modèle BMad v6 (observé sur la machine)
 - Moteur dans `_bmad/` ; `config.toml` → `[core] output_folder = "{project-root}/docs"`.
@@ -26,8 +29,8 @@ Outil macOS natif (SwiftUI) pour naviguer **et éditer** les documents markdown 
 
 ## État actuel
 - Build `xcodebuild` vert, 0 erreur.
-- Implémenté : phases 1-4 + aperçu images/PDF + workspace multi-projets + AppIcon + affichage/édition fichiers texte (yaml/json/txt/csv/toml).
-- Publié sur GitHub (privé, MIT). Reste : test manuel approfondi + suite phase 5 (recherche plein-texte, filtres, édition frontmatter en formulaire, récents).
+- Implémenté : phases 1-4 + aperçu images/PDF + workspace multi-projets + AppIcon + affichage/édition fichiers texte (yaml/json/txt/csv/toml) + i18n EN/FR + distribution notarisée.
+- **v1.0.0 publiée** : dépôt GitHub public (MIT), GitHub Release v1.0.0 avec DMG signé/notarisé, landing page GitHub Pages, portfolio github.io + lauriat.fr. Reste : test manuel approfondi + suite phase 5 (recherche plein-texte, filtres, édition frontmatter en formulaire, récents).
 
 ## Pièges connus
 - Récursion de vue + `some View` → utiliser `List(_:children:selection:)` natif, pas une fonction `@ViewBuilder` qui s'appelle elle-même.

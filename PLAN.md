@@ -52,8 +52,14 @@ BmadBrowser/
 3. **Navigation + preview** : arbre latéral, rendu MarkdownUI, frontmatter en badges.
 4. **Édition** : toggle preview/édition, TextEditor, sauvegarde Cmd+S, indicateur « modifié ».
 5. **Confort** (en cours) : ✅ ouverture externe des non-md, ✅ persistance du dernier workspace, ✅ aperçu images/PDF, ✅ workspace multi-projets (niveau supérieur), ✅ affichage/édition fichiers texte (yaml/json/txt/csv/toml), ✅ AppIcon. Reste : recherche plein-texte, filtres par statut/dossier, édition frontmatter en formulaire, liste des récents.
+6. **Distribution & internationalisation** ✅ :
+   - **i18n** : passage de l'UI en langue de base **anglaise** (clés littérales dans le code), traductions françaises fournies par un String Catalog `Resources/Localizable.xcstrings` (compilé en `en.lproj`/`fr.lproj`, pluriels gérés) ; `project.yml` déclare `options.developmentLanguage: en`. L'app suit la langue système macOS.
+   - **Version** : `MARKETING_VERSION` bumpé `0.1.0` → **`1.0.0`** (première version publique).
+   - **Release notarisée** : `Scripts/release.sh <version>` — build Release, signature Developer ID (Hardened Runtime), notarisation Apple (profil trousseau `AppliMacVincentGithub`), staple, DMG (`release/BmadBrowser-<version>.dmg`) attaché à une **GitHub Release**.
+   - **Site** : landing page bilingue `docs/index.html` publiée via **GitHub Pages** (`vincentlauriat.github.io/BmadBrowser`), app ajoutée au portfolio github.io et à lauriat.fr.
+   - **Dépôt rendu public** : `github.com/vincentlauriat/BmadBrowser` passe de privé à public.
 
-> Hors phases : icône générée par script Swift, dépôt GitHub privé (MIT), workflow feature branch → merge.
+> Hors phases : icône générée par script Swift, workflow feature branch → merge.
 
 ## Vérification
 `xcodebuild -scheme BmadBrowser build` vert à chaque phase. Test manuel sur un projet réel (ex: `clarify/docs`).

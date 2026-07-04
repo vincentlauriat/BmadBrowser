@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BmadBrowser — macOS browser & editor for BMad artifacts</title>
+<meta name="description" content="BmadBrowser is a native macOS browser and editor for BMad method markdown artifacts — auto-detects projects, renders markdown, previews images and PDFs, and edits text files.">
+<meta property="og:title" content="BmadBrowser — macOS browser & editor for BMad artifacts">
+<meta property="og:description" content="Native macOS browser and editor for BMad method markdown artifacts. Free, signed & notarized download.">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --bg:#0b1020; --bg2:#0f1630; --card:#141c38; --line:#243056;
+    --txt:#eaf0ff; --muted:#a7b3d6; --accent:#5b8bff; --accent2:#7c5cff; --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 700px at 50% -10%,#1a2350 0%,var(--bg) 55%);
+    color:var(--txt);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+  .en,.fr{display:none}
+  body.lang-en .en{display:revert}
+  body.lang-fr .fr{display:revert}
+  nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);
+    background:rgba(11,16,32,.72);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:16px;height:60px}
+  nav b{font-size:1.05rem}
+  nav .spacer{flex:1}
+  .langtog{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .langtog button{background:transparent;color:var(--muted);border:0;padding:5px 12px;font-size:.82rem;cursor:pointer;font-weight:600}
+  .langtog button.on{background:var(--accent);color:#fff}
+  .ghlink{color:var(--muted);font-size:.9rem;font-weight:600}
+  header{padding:72px 0 40px;text-align:center}
+  .icon{width:96px;height:96px;border-radius:22px;margin:0 auto 24px;display:block;
+    box-shadow:0 12px 32px rgba(91,139,255,.28);border:1px solid var(--line)}
+  h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
+  h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tagline{font-size:clamp(1.05rem,2.4vw,1.3rem);color:var(--muted);max-width:640px;margin:0 auto}
+  .cta-row{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:36px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:1.02rem;
+    padding:14px 28px;border-radius:999px;transition:transform .14s ease,box-shadow .2s ease}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
+    box-shadow:0 8px 24px rgba(91,139,255,.35)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(91,139,255,.48)}
+  .btn-secondary{color:var(--muted);border:1px solid var(--line);padding:12px 24px}
+  .btn-secondary:hover{border-color:var(--accent);color:var(--txt)}
+  .subtext{color:var(--muted);font-size:.85rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;padding:56px 0 40px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px;transition:transform .14s ease,border-color .2s ease;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-4px);border-color:var(--accent)}
+  .card .top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .card .emoji{font-size:1.7rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#1c2648,#243056);border:1px solid var(--line);border-radius:12px;flex-shrink:0}
+  .card h3{font-size:1.15rem}
+  .card p{color:var(--muted);font-size:.93rem;margin:0}
+  .featured{grid-column:1/-1;background:linear-gradient(135deg,#16204a,#1a1440);border-color:#33407a}
+  footer{padding:40px 0 64px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:.9rem}
+  footer a{color:var(--accent);font-weight:600}
+</style>
+</head>
+<body class="lang-en">
+
+<nav><div class="wrap">
+  <b>BmadBrowser</b>
+  <div class="spacer"></div>
+  <div class="langtog">
+    <button id="l-en" class="on" onclick="setLang('en')">EN</button>
+    <button id="l-fr" onclick="setLang('fr')">FR</button>
+  </div>
+  <a class="ghlink" href="https://github.com/vincentlauriat/BmadBrowser" target="_blank" rel="noopener">GitHub ↗</a>
+</div></nav>
+
+<header><div class="wrap">
+  <img class="icon" src="icon.png" alt="BmadBrowser app icon">
+  <h1><span class="grad">BmadBrowser</span></h1>
+  <p class="tagline">
+    <span class="en">Native macOS browser &amp; editor for BMad method markdown artifacts.</span>
+    <span class="fr">Navigateur &amp; éditeur macOS natif pour les artefacts markdown de la méthode BMad.</span>
+  </p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://github.com/vincentlauriat/BmadBrowser/releases/latest/download/BmadBrowser.dmg">
+      <span class="en">⬇ Download for macOS</span>
+      <span class="fr">⬇ Télécharger pour macOS</span>
+    </a>
+    <p class="subtext">
+      <span class="en">macOS 14+ · Apple Silicon &amp; Intel · Signed &amp; notarized</span>
+      <span class="fr">macOS 14+ · Apple Silicon &amp; Intel · Signée &amp; notarisée</span>
+    </p>
+    <a class="btn btn-secondary" href="https://github.com/vincentlauriat/BmadBrowser" target="_blank" rel="noopener">
+      <span class="en">View on GitHub</span>
+      <span class="fr">Voir sur GitHub</span>
+    </a>
+  </div>
+</div></header>
+
+<div class="wrap"><div class="grid">
+
+  <article class="card featured">
+    <div class="top"><div class="emoji">🗂️</div>
+      <h3><span class="en">Multi-project workspace</span><span class="fr">Workspace multi-projets</span></h3></div>
+    <p><span class="en">A focused 3-column UI — Projects, Documents, Detail — built to browse and edit BMad artifacts without leaving the flow.</span>
+       <span class="fr">Une UI en 3 colonnes — Projets, Documents, Détail — pensée pour parcourir et éditer les artefacts BMad sans rompre le flux.</span></p>
+  </article>
+
+  <article class="card">
+    <div class="top"><div class="emoji">🔍</div>
+      <h3><span class="en">Auto-detection</span><span class="fr">Détection automatique</span></h3></div>
+    <p><span class="en">Finds your projects and the BMad output folder automatically (<code>_bmad/config.toml</code>, <code>docs/</code>, <code>_bmad-output/</code>).</span>
+       <span class="fr">Détecte automatiquement vos projets et le dossier de sortie BMad (<code>_bmad/config.toml</code>, <code>docs/</code>, <code>_bmad-output/</code>).</span></p>
+  </article>
+
+  <article class="card">
+    <div class="top"><div class="emoji">📝</div>
+      <h3><span class="en">Rich markdown</span><span class="fr">Rendu markdown riche</span></h3></div>
+    <p><span class="en">Clean markdown rendering with text selection, so you can read and copy from your artifacts naturally.</span>
+       <span class="fr">Rendu markdown soigné avec sélection de texte, pour lire et copier vos artefacts naturellement.</span></p>
+  </article>
+
+  <article class="card">
+    <div class="top"><div class="emoji">🖼️</div>
+      <h3><span class="en">Image &amp; PDF preview</span><span class="fr">Aperçu images &amp; PDF</span></h3></div>
+    <p><span class="en">Built-in preview for images and PDFs — no need to switch apps to check a diagram or a spec.</span>
+       <span class="fr">Aperçu intégré pour les images et les PDF — pas besoin de changer d'app pour vérifier un schéma ou une spec.</span></p>
+  </article>
+
+  <article class="card">
+    <div class="top"><div class="emoji">✏️</div>
+      <h3><span class="en">Edit &amp; save</span><span class="fr">Édition &amp; sauvegarde</span></h3></div>
+    <p><span class="en">Edit and save (⌘S) text files — yaml, json, txt, csv, toml, md — right where they live.</span>
+       <span class="fr">Éditez et sauvegardez (⌘S) les fichiers texte — yaml, json, txt, csv, toml, md — là où ils se trouvent.</span></p>
+  </article>
+
+  <article class="card">
+    <div class="top"><div class="emoji">🏷️</div>
+      <h3><span class="en">Frontmatter badges</span><span class="fr">Badges de frontmatter</span></h3></div>
+    <p><span class="en">YAML frontmatter surfaced as badges (status, type, date) plus filter by name to find documents fast.</span>
+       <span class="fr">Le frontmatter YAML affiché en badges (statut, type, date), avec filtre par nom pour retrouver un document vite.</span></p>
+  </article>
+
+  <article class="card">
+    <div class="top"><div class="emoji">🌐</div>
+      <h3><span class="en">Bilingual EN/FR</span><span class="fr">Bilingue EN/FR</span></h3></div>
+    <p><span class="en"><b>Bilingual interface</b> that remembers your last opened project between sessions.</span>
+       <span class="fr">Une <b>interface bilingue</b> qui se souvient du dernier projet ouvert entre les sessions.</span></p>
+  </article>
+
+</div></div>
+
+<footer><div class="wrap">
+  <p>
+    <span class="en">More about me on <a href="https://lauriat.fr" target="_blank" rel="noopener">lauriat.fr</a> · </span>
+    <span class="fr">Plus sur moi sur <a href="https://lauriat.fr" target="_blank" rel="noopener">lauriat.fr</a> · </span>
+    <a href="https://github.com/vincentlauriat" target="_blank" rel="noopener">GitHub</a>
+  </p>
+</div></footer>
+
+<script>
+  function setLang(l){
+    document.body.classList.remove('lang-en','lang-fr');
+    document.body.classList.add('lang-'+l);
+    document.documentElement.lang=l;
+    document.getElementById('l-en').classList.toggle('on',l==='en');
+    document.getElementById('l-fr').classList.toggle('on',l==='fr');
+    try{localStorage.setItem('vl-lang',l)}catch(e){}
+  }
+  (function(){
+    var saved;try{saved=localStorage.getItem('vl-lang')}catch(e){}
+    var l=saved||((navigator.language||'en').slice(0,2)==='fr'?'fr':'en');
+    setLang(l);
+  })();
+</script>
+</body>
+</html>

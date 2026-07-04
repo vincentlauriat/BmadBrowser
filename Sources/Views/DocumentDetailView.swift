@@ -21,9 +21,9 @@ struct DocumentDetailView: View {
                 }
             } else {
                 ContentUnavailableView(
-                    "Aucun document sélectionné",
+                    "No document selected",
                     systemImage: "doc.text",
-                    description: Text("Choisissez un document dans la liste.")
+                    description: Text("Pick a document from the list.")
                 )
             }
         }
@@ -117,9 +117,9 @@ struct DocumentDetailView: View {
         ContentUnavailableView {
             Label(node.name, systemImage: node.systemImage)
         } description: {
-            Text("Ce type de fichier ne peut pas être affiché ici.")
+            Text("This file type can't be displayed here.")
         } actions: {
-            Button("Ouvrir dans l'app par défaut") { state.openExternally() }
+            Button("Open in default app") { state.openExternally() }
         }
     }
 
@@ -130,19 +130,19 @@ struct DocumentDetailView: View {
         ToolbarItemGroup {
             if let node = state.selection, node.isEditable {
                 if state.isDirty {
-                    Text("• modifié").font(.caption).foregroundStyle(.orange)
+                    Text("• edited").font(.caption).foregroundStyle(.orange)
                 }
                 Button {
                     if state.isEditing && state.isDirty { state.save() }
                     state.isEditing.toggle()
                 } label: {
-                    Label(state.isEditing ? "Aperçu" : "Éditer",
+                    Label(state.isEditing ? "Preview" : "Edit",
                           systemImage: state.isEditing ? "eye" : "pencil")
                 }
                 Button {
                     state.save()
                 } label: {
-                    Label("Enregistrer", systemImage: "square.and.arrow.down")
+                    Label("Save", systemImage: "square.and.arrow.down")
                 }
                 .keyboardShortcut("s", modifiers: .command)
                 .disabled(!state.isDirty)
@@ -150,7 +150,7 @@ struct DocumentDetailView: View {
                 Button {
                     state.openExternally()
                 } label: {
-                    Label("Ouvrir dans l'app par défaut", systemImage: "arrow.up.forward.app")
+                    Label("Open in default app", systemImage: "arrow.up.forward.app")
                 }
             }
         }

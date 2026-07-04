@@ -54,6 +54,11 @@ Sources/
     DocumentDetailView.swift  # column 3: markdown render / editor + Cmd+S
     MediaViews.swift          # ImageViewer (zoom) + PDFViewer
 Resources/                    # entitlements, asset catalog
+  Localizable.xcstrings        # String Catalog: English base + French translations
+Scripts/
+  release.sh                   # Release build, Developer ID signing, notarization, DMG packaging
+docs/
+  index.html                   # bilingual landing page (GitHub Pages)
 ```
 
 ## 4. Component diagram
@@ -192,3 +197,59 @@ script (AppKit/CoreGraphics) that renders the icon vectorially at every required
 size (16→1024, @1x/@2x): a gradient squircle with a markdown document card and a
 green status dot. `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon` wires it up; the
 catalog is compiled by `actool` because it sits under `sources:`.
+
+## 12. Localization (i18n)
+
+The app is bilingual (English / French) and follows the macOS system language.
+
+- **Base language**: English. All UI code uses English literal keys
+  (`Text("Open Root…")`, etc.) rather than French strings — the previous
+  hard-coded French text was migrated to English keys.
+- **String Catalog**: `Resources/Localizable.xcstrings` is the single source of
+  translations. It holds the French strings for every English key, including
+  plural variants via `.stringsdict`-style plural rules (e.g. `%lld projects`).
+- **Build integration**: `project.yml` declares `options.developmentLanguage: en`
+  and lists `Resources/Localizable.xcstrings` under the target's `sources:`
+  (same rule as the asset catalog — it must live under `sources:`, not
+  `resources:`, to be compiled). Xcode's build system compiles the catalog into
+  `en.lproj` and `fr.lproj` `.strings`/`.stringsdict` bundles automatically; no
+  manual `.lproj` folders are checked in.
+- **Non-SwiftUI strings**: code paths outside SwiftUI's `Text` views — error
+  messages surfaced by `AppState`, and the `NSOpenPanel` prompt/button labels —
+  use `String(localized:)` with the same English keys so they resolve through
+  the same catalog.
+- **Runtime behavior**: no in-app language switcher; the app simply follows the
+  user's macOS system language, falling back to English if French is not the
+  system language.
+
+## 13. Distribution
+
+- **Versioning**: `MARKETING_VERSION` in `project.yml` (currently `1.0.0`).
+- **`Scripts/release.sh <version>`** — end-to-end release pipeline:
+  1. Verifies `project.yml`'s `MARKETING_VERSION` matches the requested version.
+  2. `xcodegen generate`, then `xcodebuild -configuration Release` with
+     `CODE_SIGNING_ALLOWED=NO` (manual signing avoids `com.apple.provenance`
+     xattr issues from `lsregister` during Release builds).
+  3. Stages the built `.app` into a clean temp directory (`ditto
+     --norsrc --noextattr --noacl`) to strip xattrs that break in-place
+     `codesign --force`.
+  4. Codesigns nested frameworks/dylibs first, then the app itself, with
+     `--options runtime --timestamp` (Hardened Runtime) — signing identity
+     `Developer ID Application: Vincent LAURIAT (KFLACS69T9)`. Includes a
+     retry loop since Apple's timestamp server is occasionally flaky.
+  5. Packages the signed app into a DMG (with an `/Applications` alias) at
+     `release/BmadBrowser-<version>.dmg`.
+  6. Submits the DMG for **notarization** via `xcrun notarytool submit
+     --keychain-profile "AppliMacVincentGithub" --wait`, then staples the
+     ticket (`xcrun stapler staple`) and validates it.
+  7. A `SKIP_NOTARIZE=1` env var allows a local dry run (build + sign + DMG,
+     no notarization).
+- **Prerequisites**: XcodeGen, and the `Developer ID Application: Vincent
+  LAURIAT (KFLACS69T9)` certificate in the login keychain. Notarization
+  credentials are stored under the shared keychain profile
+  `AppliMacVincentGithub` (shared across Vincent's Mac apps, not per-project).
+- **Publishing**: the notarized DMG is attached to a GitHub Release
+  (`vincentlauriat/BmadBrowser`, now a **public** repository). The bilingual
+  landing page `docs/index.html` is served via **GitHub Pages** at
+  `https://vincentlauriat.github.io/BmadBrowser/`, and the app is listed on
+  Vincent's github.io portfolio and on lauriat.fr.

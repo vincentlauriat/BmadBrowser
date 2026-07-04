@@ -25,15 +25,15 @@ struct DocumentTreeView: View {
             Group {
                 if state.project == nil {
                     ContentUnavailableView(
-                        "Aucun projet ouvert",
+                        "No project open",
                         systemImage: "folder.badge.questionmark",
-                        description: Text("Ouvrez un projet BMad (⌘O) pour afficher ses documents.")
+                        description: Text("Open a BMad project (⌘O) to see its documents.")
                     )
                 } else if state.tree.isEmpty {
                     ContentUnavailableView(
-                        "Aucun document",
+                        "No document",
                         systemImage: "tray",
-                        description: Text("Ce projet ne contient pas d'artefact BMad lisible.")
+                        description: Text("This project has no readable BMad artifact.")
                     )
                 } else {
                     List(state.filteredTree, children: \.children, selection: selectionBinding) { node in
@@ -44,7 +44,7 @@ struct DocumentTreeView: View {
                 }
             }
         }
-        .searchable(text: $state.searchText, placement: .sidebar, prompt: "Filtrer les documents")
+        .searchable(text: $state.searchText, placement: .sidebar, prompt: "Filter documents")
     }
 }
 

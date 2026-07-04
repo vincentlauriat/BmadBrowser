@@ -54,6 +54,11 @@ Sources/
     DocumentDetailView.swift  # colonne 3 : rendu markdown / éditeur + Cmd+S
     MediaViews.swift          # ImageViewer (zoom) + PDFViewer
 Resources/                    # entitlements, catalogue d'assets
+  Localizable.xcstrings        # String Catalog : base anglaise + traductions françaises
+Scripts/
+  release.sh                   # build Release, signature Developer ID, notarisation, packaging DMG
+docs/
+  index.html                   # landing page bilingue (GitHub Pages)
 ```
 
 ## 4. Diagramme des composants
@@ -194,3 +199,65 @@ autonome (AppKit/CoreGraphics) qui rend l'icône vectoriellement à chaque taill
 requise (16→1024, @1x/@2x) : squircle dégradé avec carte document markdown et
 pastille de statut verte. `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon` la câble ;
 le catalogue est compilé par `actool` car il est sous `sources:`.
+
+## 12. Localisation (i18n)
+
+L'app est bilingue (anglais / français) et suit la langue système de macOS.
+
+- **Langue de base** : anglais. Tout le code UI utilise des clés littérales
+  anglaises (`Text("Open Root…")`, etc.) plutôt que du texte français en dur —
+  le texte français codé en dur auparavant a été migré vers des clés anglaises.
+- **String Catalog** : `Resources/Localizable.xcstrings` est la source unique
+  des traductions. Il porte les chaînes françaises pour chaque clé anglaise, y
+  compris les variantes plurielles via des règles de pluriel façon
+  `.stringsdict` (ex. `%lld projects`).
+- **Intégration au build** : `project.yml` déclare
+  `options.developmentLanguage: en` et liste `Resources/Localizable.xcstrings`
+  sous `sources:` de la target (même règle que pour le catalogue d'assets — il
+  doit être sous `sources:`, pas `resources:`, pour être compilé). Le système
+  de build d'Xcode compile automatiquement le catalogue en bundles
+  `.strings`/`.stringsdict` `en.lproj` et `fr.lproj` ; aucun dossier `.lproj`
+  manuel n'est versionné.
+- **Chaînes hors SwiftUI** : les chemins de code en dehors des vues `Text` de
+  SwiftUI — messages d'erreur exposés par `AppState`, et libellés de prompt /
+  boutons du `NSOpenPanel` — utilisent `String(localized:)` avec les mêmes
+  clés anglaises pour résoudre via le même catalogue.
+- **Comportement à l'exécution** : pas de sélecteur de langue dans l'app ;
+  l'app suit simplement la langue système macOS de l'utilisateur, avec repli
+  sur l'anglais si le français n'est pas la langue système.
+
+## 13. Distribution
+
+- **Versionnage** : `MARKETING_VERSION` dans `project.yml` (actuellement `1.0.0`).
+- **`Scripts/release.sh <version>`** — pipeline de release de bout en bout :
+  1. Vérifie que `MARKETING_VERSION` dans `project.yml` correspond à la
+     version demandée.
+  2. `xcodegen generate`, puis `xcodebuild -configuration Release` avec
+     `CODE_SIGNING_ALLOWED=NO` (signature manuelle pour éviter les problèmes
+     de xattr `com.apple.provenance` posés par `lsregister` lors des builds
+     Release).
+  3. Copie l'app buildée dans un dossier temporaire propre (`ditto
+     --norsrc --noextattr --noacl`) pour retirer les xattrs qui font échouer
+     `codesign --force` en place.
+  4. Signe d'abord les frameworks/dylibs imbriqués, puis l'app elle-même,
+     avec `--options runtime --timestamp` (Hardened Runtime) — identité de
+     signature `Developer ID Application: Vincent LAURIAT (KFLACS69T9)`.
+     Inclut une boucle de nouvelle tentative car le serveur de timestamp
+     Apple est parfois flaky.
+  5. Packagé l'app signée dans un DMG (avec un alias `/Applications`) sous
+     `release/BmadBrowser-<version>.dmg`.
+  6. Soumet le DMG à la **notarisation** via `xcrun notarytool submit
+     --keychain-profile "AppliMacVincentGithub" --wait`, puis agrafe le
+     ticket (`xcrun stapler staple`) et le valide.
+  7. Une variable d'environnement `SKIP_NOTARIZE=1` permet un essai local
+     (build + signature + DMG, sans notarisation).
+- **Prérequis** : XcodeGen, et le certificat `Developer ID Application:
+  Vincent LAURIAT (KFLACS69T9)` dans le trousseau de connexion. Les
+  identifiants de notarisation sont stockés dans le profil trousseau partagé
+  `AppliMacVincentGithub` (partagé entre les apps Mac de Vincent, pas
+  spécifique au projet).
+- **Publication** : le DMG notarisé est attaché à une GitHub Release
+  (`vincentlauriat/BmadBrowser`, désormais un dépôt **public**). La landing
+  page bilingue `docs/index.html` est servie via **GitHub Pages** à
+  `https://vincentlauriat.github.io/BmadBrowser/`, et l'app est référencée
+  sur le portfolio github.io de Vincent ainsi que sur lauriat.fr.

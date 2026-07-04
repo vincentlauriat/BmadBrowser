@@ -28,7 +28,7 @@ struct ImageViewer: View {
             }
         } else {
             ContentUnavailableView(
-                "Image illisible",
+                "Unreadable image",
                 systemImage: "exclamationmark.triangle",
                 description: Text(url.lastPathComponent)
             )
@@ -45,7 +45,7 @@ struct ImageViewer: View {
             Button { scale = max(0.2, scale - 0.25) } label: { Image(systemName: "minus.magnifyingglass") }
             Text("\(Int(scale * 100)) %").font(.caption.monospacedDigit()).frame(width: 48)
             Button { scale = min(6, scale + 0.25) } label: { Image(systemName: "plus.magnifyingglass") }
-            Button("Ajuster") { scale = 1.0 }
+            Button("Fit") { scale = 1.0 }
         }
         .buttonStyle(.borderless)
         .padding(.horizontal, 16)
@@ -110,7 +110,7 @@ struct LocalImageProvider: ImageProvider {
     }
 
     private func brokenImage(_ url: URL?) -> some View {
-        Label(url?.lastPathComponent ?? "image manquante", systemImage: "photo.badge.exclamationmark")
+        Label(url?.lastPathComponent ?? String(localized: "missing image"), systemImage: "photo.badge.exclamationmark")
             .font(.caption)
             .foregroundStyle(.secondary)
             .padding(8)

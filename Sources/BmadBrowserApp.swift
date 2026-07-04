@@ -11,7 +11,7 @@ struct BmadBrowserApp: App {
         }
         .commands {
             CommandGroup(replacing: .newItem) {
-                Button("Ouvrir une racine…") {
+                Button("Open a Root…") {
                     state.presentOpenPanel()
                 }
                 .keyboardShortcut("o", modifiers: .command)

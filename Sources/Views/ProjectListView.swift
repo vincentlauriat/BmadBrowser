@@ -24,9 +24,9 @@ struct ProjectListView: View {
                 Divider()
                 if workspace.projects.isEmpty {
                     ContentUnavailableView(
-                        "Aucun projet",
+                        "No project",
                         systemImage: "square.stack.3d.up.slash",
-                        description: Text("Aucun projet BMad trouvé sous cette racine.")
+                        description: Text("No BMad project found under this root.")
                     )
                 } else {
                     List(workspace.projects, selection: selectionBinding) { project in
@@ -37,9 +37,9 @@ struct ProjectListView: View {
                 }
             } else {
                 ContentUnavailableView(
-                    "Aucune racine ouverte",
+                    "No root open",
                     systemImage: "folder.badge.questionmark",
-                    description: Text("Ouvrez une racine de projets (⌘O).")
+                    description: Text("Open a projects root (⌘O).")
                 )
             }
         }
@@ -51,9 +51,9 @@ private struct WorkspaceHeader: View {
     let workspace: Workspace
 
     private var subtitle: String {
-        if workspace.isSingleProject { return "Projet unique" }
+        if workspace.isSingleProject { return String(localized: "Single project") }
         let count = workspace.projects.count
-        return "\(count) projet\(count > 1 ? "s" : "")"
+        return String(localized: "\(count) projects")
     }
 
     var body: some View {

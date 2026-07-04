@@ -27,8 +27,8 @@ final class AppState {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.prompt = "Ouvrir"
-        panel.message = "Choisissez une racine contenant un ou plusieurs projets BMad"
+        panel.prompt = String(localized: "Open")
+        panel.message = String(localized: "Choose a root containing one or more BMad projects")
         if panel.runModal() == .OK, let url = panel.url {
             open(rootURL: url, persist: true)
         }
@@ -51,7 +51,7 @@ final class AppState {
             selectProject(first)
         } else {
             clearProject()
-            errorMessage = "Aucun projet BMad trouvé sous ce dossier (ni _bmad/, ni docs/, ni _bmad-output/)."
+            errorMessage = String(localized: "No BMad project found under this folder (no _bmad/, docs/, or _bmad-output/).")
         }
     }
 
@@ -117,7 +117,7 @@ final class AppState {
                 } else {
                     documentBody = ""
                     currentFrontmatter = nil
-                    errorMessage = "Impossible de lire \(node.name)."
+                    errorMessage = String(localized: "Couldn't read \(node.name).")
                 }
             } else {
                 documentBody = ""
@@ -163,7 +163,7 @@ final class AppState {
             try content.write(to: node.url, atomically: true, encoding: .utf8)
             isDirty = false
         } catch {
-            errorMessage = "Échec de la sauvegarde : \(error.localizedDescription)"
+            errorMessage = String(localized: "Save failed: \(error.localizedDescription)")
         }
     }
 

@@ -29,5 +29,14 @@
 - [ ] Édition du frontmatter en formulaire
 - [ ] Liste des workspaces/projets récents
 
+## Phase 6 — Distribution & i18n ✅
+- [x] i18n EN/FR (String Catalog `Resources/Localizable.xcstrings`, base anglaise + traductions FR + pluriels)
+- [x] Bump version `1.0.0`
+- [x] `Scripts/release.sh` (build Release + Developer ID + notarisation + DMG)
+- [x] Landing page github.io (`docs/index.html`, GitHub Pages)
+- [x] Dépôt rendu public
+- [x] GitHub Release v1.0.0
+- [x] Carte portfolio + lauriat.fr
+
 ## Test manuel restant
 - [ ] Lancer l'app et ouvrir un projet réel (ex: `~/Documents/GitHub/clarify`) pour valider l'UX

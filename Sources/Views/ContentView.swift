@@ -26,14 +26,14 @@ struct ContentView: View {
                 Button {
                     state.presentOpenPanel()
                 } label: {
-                    Label("Ouvrir une racine", systemImage: "folder")
+                    Label("Open a root", systemImage: "folder")
                 }
             }
             ToolbarItem(placement: .navigation) {
                 Button {
                     state.reload()
                 } label: {
-                    Label("Recharger", systemImage: "arrow.clockwise")
+                    Label("Reload", systemImage: "arrow.clockwise")
                 }
                 .disabled(state.workspace == nil)
             }

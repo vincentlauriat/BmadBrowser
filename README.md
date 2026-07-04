@@ -1,62 +1,89 @@
 # BmadBrowser
 
-Outil macOS natif (SwiftUI) pour **naviguer et éditer** les documents produits par la méthode [BMad](https://github.com/bmad-code-org/BMAD-METHOD) (v6) : les artefacts markdown rangés dans la sous-arborescence de sortie d'un projet.
+Native macOS (SwiftUI) app to **browse and edit** the documents produced by the [BMad](https://github.com/bmad-code-org/BMAD-METHOD) method (v6) — the markdown artifacts stored in a project's output folder.
 
-## Fonctionnalités
+[![Release](https://img.shields.io/github/v/release/vincentlauriat/BmadBrowser)](https://github.com/vincentlauriat/BmadBrowser/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![macOS 14+](https://img.shields.io/badge/macOS-14%2B-lightgrey)
 
-| Statut | Fonctionnalité |
+🇫🇷 Version française : [README.fr.md](README.fr.md)
+
+## Download
+
+- **[Download the DMG](https://github.com/vincentlauriat/BmadBrowser/releases/latest/download/BmadBrowser.dmg)** — macOS 14+, Apple Silicon & Intel, signed & notarized.
+- Or visit the website: **[vincentlauriat.github.io/BmadBrowser](https://vincentlauriat.github.io/BmadBrowser/)**
+
+## Features
+
+| Status | Feature |
 |--------|----------------|
-| ✅ | **Niveau supérieur (workspace)** : ouverture d'une racine regroupant plusieurs projets BMad (UI 3 colonnes : Projets / Documents / Détail) |
-| ✅ | Détection auto des projets : la racine elle-même (mono-projet) ou ses sous-dossiers contenant `_bmad/`, `docs/` ou `_bmad-output/` |
-| ✅ | Détection auto du dossier de sortie BMad (`_bmad/config.toml` → `output_folder`, fallbacks `docs/`, `_bmad-output/`) |
-| ✅ | Arbre des documents (markdown + artefacts xlsx/pptx/png…) |
-| ✅ | Affichage et édition des fichiers texte (`yaml`, `json`, `txt`, `csv`, `toml`) en monospace |
-| ✅ | Rendu markdown riche (MarkdownUI) + sélection de texte |
-| ✅ | Frontmatter YAML affiché en badges (statut, type, date) |
-| ✅ | Édition + sauvegarde (`⌘S`) avec indicateur « modifié » |
-| ✅ | Filtre/recherche par nom dans la barre latérale |
-| ✅ | Persistance du dernier projet ouvert (security-scoped bookmark) |
-| ✅ | Ouverture externe des fichiers non-markdown |
+| ✅ | **Top level (workspace)**: open a root folder grouping several BMad projects (3-column UI: Projects / Documents / Detail) |
+| ✅ | Auto-detection of projects: the root itself (single-project mode) or its subfolders containing `_bmad/`, `docs/`, or `_bmad-output/` |
+| ✅ | Auto-detection of the BMad output folder (`_bmad/config.toml` → `output_folder`, fallbacks `docs/`, `_bmad-output/`) |
+| ✅ | Document tree (markdown + artifacts: xlsx/pptx/png…) |
+| ✅ | Viewing and editing of text files (`yaml`, `json`, `txt`, `csv`, `toml`) in monospace |
+| ✅ | Rich markdown rendering (MarkdownUI) + text selection |
+| ✅ | YAML frontmatter shown as badges (status, type, date) |
+| ✅ | Editing + saving (`⌘S`) with a "modified" indicator |
+| ✅ | Filter/search by name in the sidebar |
+| ✅ | Persistence of the last opened project (security-scoped bookmark) |
+| ✅ | External opening of non-markdown files |
+| ✅ | Bilingual UI (English / French), follows the system language |
 
-## Prérequis
+## Requirements
 
 - macOS 14+
 - Xcode 27 / Swift 6
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
 
-## Build & lancement
+## Build from source
 
 ```bash
 xcodegen generate
 xcodebuild -project BmadBrowser.xcodeproj -scheme BmadBrowser -destination 'platform=macOS' build
-open -a BmadBrowser   # ou lancer depuis Xcode
+open -a BmadBrowser   # or run from Xcode
 ```
 
-## Structure
+## Release
+
+```bash
+./Scripts/release.sh 1.0.0
+```
+
+Builds a Release `.app`, signs it with a Developer ID certificate (Hardened Runtime), submits it for Apple notarization, staples the ticket, and packages a notarized, ready-to-distribute `release/BmadBrowser-1.0.0.dmg`.
+
+Prerequisites: XcodeGen, and the `Developer ID Application: Vincent LAURIAT (KFLACS69T9)` certificate in the login keychain (notarization credentials are stored under the shared keychain profile `AppliMacVincentGithub`).
+
+## Project layout
 
 ```
-project.yml              # définition XcodeGen (source de vérité du projet)
+project.yml              # XcodeGen definition (source of truth of the project)
 Sources/
-  BmadBrowserApp.swift   # point d'entrée @main
+  BmadBrowserApp.swift   # @main entry point
   Models/                # Workspace, BmadProject, DocumentNode, Frontmatter
   Services/              # WorkspaceScanner, ConfigResolver, ProjectScanner, FrontmatterParser, BookmarkStore
   ViewModels/AppState.swift
   Views/                 # ContentView, ProjectListView, DocumentTreeView, DocumentDetailView, MediaViews
-Resources/               # entitlements, assets
+Resources/               # entitlements, assets, Localizable.xcstrings (EN base + FR translations)
+Scripts/
+  release.sh             # Release build, Developer ID signing, notarization, DMG packaging
+docs/
+  index.html             # Bilingual landing page (GitHub Pages)
 ```
 
 ## Roadmap
 
-- [x] Aperçu des images / PDF intégré
-- [x] Niveau supérieur : workspace multi-projets
-- [ ] Recherche plein-texte (dans le contenu, pas seulement les noms)
-- [ ] Filtres par statut / type de workflow
-- [ ] Édition du frontmatter en formulaire
-- [ ] Workspaces / projets récents
+- [x] Built-in image / PDF preview
+- [x] Top level: multi-project workspace
+- [x] Bilingual UI (English / French)
+- [ ] Full-text search (content, not just names)
+- [ ] Filters by status / workflow type
+- [ ] Frontmatter editing as a form
+- [ ] Recent workspaces / projects
 
-> Voir `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) pour la conception détaillée,
-> `PLAN.md` pour le découpage des phases et `TODOS.md` pour l'avancement.
+> See `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) for the detailed design,
+> `PLAN.md` for the phase breakdown and `TODOS.md` for progress.
 
-## Licence
+## License
 
 [MIT](LICENSE) © 2026 Vincent Lauriat

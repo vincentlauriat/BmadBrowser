@@ -17,3 +17,5 @@
 | 13 | 2026-06-29 | merge |
 | 14 | 2026-06-29 | mets a jour toutes les documentations |
 | 15 | 2026-06-29 | oui systematiquement (workflow feature branch → merge par défaut) |
+| 16 | 2026-07-04 | lance l'application |
+| 17 | 2026-07-04 | application prête à être distribuée, en français et anglais, avec un github, un readme et toutes les documentations + page github.io + maj lauriat.fr |
