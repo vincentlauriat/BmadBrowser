@@ -41,7 +41,8 @@ enum RecentsStore {
         }
     }
 
-    /// Résout un récent en URL et démarre son accès scoped (via `BookmarkStore`).
+    /// Résout un récent en URL et démarre son accès scoped.
+    /// L'appelant (`AppState`) est responsable de le libérer via `adoptScopedAccess`.
     static func resolve(_ recent: RecentProject) -> URL? {
         var isStale = false
         guard let url = try? URL(
@@ -49,7 +50,7 @@ enum RecentsStore {
             options: .withSecurityScope,
             relativeTo: nil,
             bookmarkDataIsStale: &isStale
-        ), BookmarkStore.beginAccess(url) else { return nil }
+        ), url.startAccessingSecurityScopedResource() else { return nil }
         return url
     }
 

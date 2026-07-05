@@ -35,6 +35,8 @@ Outil macOS natif (SwiftUI) pour **naviguer et éditer** les documents produits 
 | ✅ | Préférences (⌘,) : thème markdown, taille de police éditeur, bascule stats |
 | ✅ | Aperçu inline images (zoom), SVG et PDF |
 | ✅ | Rafraîchissement auto sur changement de fichiers (FSEvents) |
+| ✅ | Multi-fenêtres, chacune avec un état indépendant |
+| ✅ | Vérification de mise à jour in-app (GitHub Releases) |
 | ✅ | Menu des racines récentes |
 | ✅ | Persistance du dernier projet ouvert (security-scoped bookmark) |
 | ✅ | Ouverture externe des fichiers non-markdown |
@@ -93,7 +95,8 @@ docs/
 - [x] Workspaces / projets récents
 - [x] Rafraîchissement auto sur changement de fichiers (FSEvents)
 - [x] Outline markdown, coloration syntaxique, export PDF, préférences
-- [ ] Auto-update Sparkle, multi-fenêtres
+- [x] Multi-fenêtres + vérification de mise à jour in-app (GitHub Releases)
+- [ ] Auto-update Sparkle complet (installation silencieuse) — passe distribution dédiée
 
 > Voir `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) pour la conception détaillée,
 > `PLAN.md` pour le découpage des phases et `TODOS.md` pour l'avancement.

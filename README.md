@@ -35,6 +35,8 @@ Native macOS (SwiftUI) app to **browse and edit** the documents produced by the 
 | ✅ | Preferences (⌘,): markdown theme, editor font size, stats toggle |
 | ✅ | Inline image (zoom), SVG and PDF preview |
 | ✅ | Auto-refresh on external file changes (FSEvents) |
+| ✅ | Multiple windows, each with independent state |
+| ✅ | In-app update check (GitHub Releases) |
 | ✅ | Recent roots menu |
 | ✅ | Persistence of the last opened project (security-scoped bookmark) |
 | ✅ | External opening of non-markdown files |
@@ -93,7 +95,8 @@ docs/
 - [x] Recent workspaces / projects
 - [x] Auto-refresh on file changes (FSEvents)
 - [x] Markdown outline, syntax highlighting, PDF export, preferences
-- [ ] Sparkle auto-update, multi-window
+- [x] Multi-window + in-app update check (GitHub Releases)
+- [ ] Full Sparkle auto-update (background silent install) — dedicated distribution pass
 
 > See `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) for the detailed design,
 > `PLAN.md` for the phase breakdown and `TODOS.md` for progress.

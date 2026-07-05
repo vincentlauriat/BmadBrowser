@@ -28,10 +28,32 @@ final class AppState {
     /// Surveillance FSEvents de la racine pour le rafraîchissement automatique.
     private var watcher: FolderWatcher?
 
+    /// URL dont cette fenêtre détient l'accès security-scoped (une par `AppState`).
+    private var scopedURL: URL?
+
+    deinit {
+        scopedURL?.stopAccessingSecurityScopedResource()
+        watcher?.stop()
+    }
+
+    /// Adopte l'accès scoped de `url` (déjà démarré par l'appelant) et libère le précédent.
+    /// `nil` = libère simplement l'accès courant (ex. ouverture d'une racine via le panneau).
+    private func adoptScopedAccess(_ url: URL?) {
+        if scopedURL != url { scopedURL?.stopAccessingSecurityScopedResource() }
+        scopedURL = url
+    }
+
     /// Dialogue « modifications non enregistrées » affiché avant une navigation destructive.
     var showUnsavedDialog = false
     /// Action à exécuter une fois le sort des modifications en cours tranché.
     private var pendingAction: (() -> Void)?
+
+    // Vérification de mise à jour (via GitHub Releases).
+    var updateResult: UpdateCheckResult?
+    var isCheckingUpdate = false
+    var showUpdateAlert = false
+    /// La vérification automatique au lancement ne s'exécute qu'une fois par process (multi-fenêtres).
+    private static var didAutoCheck = false
 
     // MARK: - Ouverture de projet
 
@@ -43,8 +65,8 @@ final class AppState {
         panel.prompt = String(localized: "Open")
         panel.message = String(localized: "Choose a root containing one or more BMad projects")
         if panel.runModal() == .OK, let url = panel.url {
-            // Nouvelle racine du panneau : libère l'accès scoped restauré précédent.
-            BookmarkStore.stopCurrentAccess()
+            // Racine du panneau : accessible pour la session, on libère juste l'accès précédent.
+            adoptScopedAccess(nil)
             open(rootURL: url, persist: true)
         }
     }
@@ -55,6 +77,7 @@ final class AppState {
             errorMessage = String(localized: "Couldn't reopen \(recent.name). The folder may have moved.")
             return
         }
+        adoptScopedAccess(url)
         open(rootURL: url, persist: true)
     }
 
@@ -64,6 +87,7 @@ final class AppState {
     /// Restaure le dernier workspace ouvert au démarrage (si bookmark disponible).
     func restoreLastProject() {
         if let url = BookmarkStore.restore() {
+            adoptScopedAccess(url)
             open(rootURL: url, persist: false)
         }
     }
@@ -273,6 +297,40 @@ final class AppState {
     func openExternally() {
         guard let node = selection else { return }
         NSWorkspace.shared.open(node.url)
+    }
+
+    // MARK: - Mise à jour
+
+    /// Vérifie s'il existe une version plus récente sur GitHub.
+    /// `userInitiated` : affiche toujours un retour ; sinon, uniquement si une MAJ est disponible.
+    func checkForUpdates(userInitiated: Bool) {
+        guard !isCheckingUpdate else { return }
+        isCheckingUpdate = true
+        Task { @MainActor in
+            let result = await UpdateChecker.check()
+            self.isCheckingUpdate = false
+            self.updateResult = result
+            switch result {
+            case .updateAvailable:
+                self.showUpdateAlert = true
+            case .upToDate, .failed:
+                if userInitiated { self.showUpdateAlert = true }
+            }
+        }
+    }
+
+    /// Vérification automatique au lancement, une seule fois par process.
+    func autoCheckForUpdatesOnce() {
+        guard !Self.didAutoCheck else { return }
+        Self.didAutoCheck = true
+        checkForUpdates(userInitiated: false)
+    }
+
+    /// Ouvre la page de la release proposée.
+    func openUpdatePage() {
+        if case .updateAvailable(let release) = updateResult {
+            NSWorkspace.shared.open(release.pageURL)
+        }
     }
 
     // MARK: - Recherche & filtres

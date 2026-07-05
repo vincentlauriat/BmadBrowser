@@ -2,24 +2,71 @@ import SwiftUI
 
 @main
 struct BmadBrowserApp: App {
-    @State private var state = AppState()
-
     var body: some Scene {
         WindowGroup {
-            ContentView(state: state)
-                .frame(minWidth: 800, minHeight: 500)
+            RootView()
         }
         .commands {
-            CommandGroup(replacing: .newItem) {
-                Button("Open a Root…") {
-                    state.presentOpenPanel()
-                }
-                .keyboardShortcut("o", modifiers: .command)
+            CommandGroup(after: .appInfo) {
+                CheckForUpdatesButton()
+            }
+            // Conserve « New Window » (⌘N) fourni par WindowGroup, ajoute « Open a Root… ».
+            CommandGroup(after: .newItem) {
+                OpenRootButton()
             }
         }
 
         Settings {
             SettingsView()
         }
+    }
+}
+
+/// Racine d'une fenêtre : possède son propre `AppState` (état indépendant par fenêtre).
+struct RootView: View {
+    @State private var state = AppState()
+
+    var body: some View {
+        ContentView(state: state)
+            .frame(minWidth: 800, minHeight: 500)
+            .focusedSceneValue(\.appState, state)
+    }
+}
+
+/// Bouton de menu « Open a Root… » agissant sur la fenêtre active.
+private struct OpenRootButton: View {
+    @FocusedValue(\.appState) private var appState
+
+    var body: some View {
+        Button("Open a Root…") {
+            appState?.presentOpenPanel()
+        }
+        .keyboardShortcut("o", modifiers: .command)
+        .disabled(appState == nil)
+    }
+}
+
+/// Bouton de menu « Check for Updates… » (menu de l'app), sur la fenêtre active.
+private struct CheckForUpdatesButton: View {
+    @FocusedValue(\.appState) private var appState
+
+    var body: some View {
+        Button("Check for Updates…") {
+            appState?.checkForUpdates(userInitiated: true)
+        }
+        .disabled(appState == nil || appState?.isCheckingUpdate == true)
+    }
+}
+
+// MARK: - FocusedValue pour atteindre l'AppState de la fenêtre focalisée
+
+private struct AppStateFocusedKey: FocusedValueKey {
+    typealias Value = AppState
+}
+
+extension FocusedValues {
+    var appState: AppState? {
+        get { self[AppStateFocusedKey.self] }
+        set { self[AppStateFocusedKey.self] = newValue }
     }
 }
