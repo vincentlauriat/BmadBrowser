@@ -1,6 +1,8 @@
 # CHANGES — BmadBrowser
 
-## Unreleased (branche `feat/multiwindow-sparkle`)
+## v1.2.0 — 2026-07-05
+
+> DMG signé/notarisé publié sur la GitHub Release `v1.2.0`.
 
 ### Added
 - **Multi-fenêtres** : chaque fenêtre a son propre `AppState` (workspace/sélection indépendants),
