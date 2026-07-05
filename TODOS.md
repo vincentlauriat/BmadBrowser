@@ -75,9 +75,16 @@
 - [x] **SwiftLint** — `.swiftlint.yml` + phase de build optionnelle (no-op si non installé).
 - [x] **Refactor recherche d'arbre** — `node(withID:)` et l'ancienne `findNode(url:in:)`
       factorisées en `firstNode(in:where:)`.
-- [ ] **Auto-update Sparkle** — cohérent avec les autres apps `~/DevApps` ; reporté (touche la
-      release + clé EdDSA à ne jamais régénérer). À faire dans une passe distribution dédiée.
-- [ ] **Support multi-fenêtres** (`WindowGroup` + état par fenêtre) pour comparer deux projets.
+- [x] **Vérification de mise à jour** in-app via l'API GitHub Releases (`UpdateChecker` + `SemVer`) :
+      contrôle silencieux au lancement + commande « Check for Updates… », alerte avec téléchargement.
+      Alternative sandbox-safe à Sparkle (pas de XPC/appcast/clé).
+- [x] **Support multi-fenêtres** — état indépendant par fenêtre (`RootView` possède son `AppState`),
+      accès security-scoped géré par instance ; « Open a Root… » cible la fenêtre active (`FocusedValue`).
+- [ ] **Sparkle complet (deltas + auto-install)** — mise à jour silencieuse en arrière-plan avec
+      installation automatique. Reporté : nécessite les services XPC Sparkle en sandbox, les
+      entitlements d'exception mach-lookup, une clé EdDSA à préserver à vie, un appcast hébergé et
+      une modification de `release.sh` (signature EdDSA). À traiter en passe distribution dédiée,
+      testée sur l'app réelle. Le vérificateur GitHub ci-dessus couvre déjà le besoin « être prévenu ».
 
 ## Limitations connues
 - **Export PDF** : `ImageRenderer` produit **une seule page continue** (pas de pagination A4/Lettre).

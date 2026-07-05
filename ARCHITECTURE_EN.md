@@ -33,7 +33,7 @@ The UI mirrors these levels in a 3-column layout.
 ```
 project.yml                  # XcodeGen definition (source of truth)
 Sources/
-  BmadBrowserApp.swift       # @main entry point + menu commands
+  BmadBrowserApp.swift       # @main + per-window RootView, menu commands, Settings scene
   Models/
     Workspace.swift          # top level: root + discovered projects
     BmadProject.swift         # a project: root URL + resolved output folder
@@ -49,8 +49,9 @@ Sources/
     RecentsStore.swift        # recently opened roots (per-entry scoped bookmarks)
     FolderWatcher.swift       # FSEvents watcher for auto-refresh
     MarkdownPDFExporter.swift # renders the markdown view to PDF (ImageRenderer)
+    UpdateChecker.swift       # GitHub Releases update check + SemVer compare
   ViewModels/
-    AppState.swift            # @Observable single source of UI state
+    AppState.swift            # @Observable per-window UI state (+ scoped access, update check)
   Views/
     ContentView.swift         # 3-column NavigationSplitView + Open Recent + unsaved dialog
     ProjectListView.swift     # column 1: projects of the workspace

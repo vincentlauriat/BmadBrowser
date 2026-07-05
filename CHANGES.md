@@ -1,5 +1,27 @@
 # CHANGES — BmadBrowser
 
+## Unreleased (branche `feat/multiwindow-sparkle`)
+
+### Added
+- **Multi-fenêtres** : chaque fenêtre a son propre `AppState` (workspace/sélection indépendants),
+  via `RootView` ; « New Window » (⌘N) restauré, « Open a Root… » cible la fenêtre active
+  (`FocusedValue`).
+- **Vérification de mise à jour** in-app via l'API GitHub Releases (`UpdateChecker` + `SemVer`) :
+  contrôle silencieux au lancement (une fois par process), commande « Check for Updates… » dans le
+  menu de l'app, alerte proposant le téléchargement quand une version plus récente existe.
+  4 tests `SemVer` (total 18 tests).
+
+### Changed
+- **Accès security-scoped** déplacé d'un état statique global vers un cycle de vie **par `AppState`**
+  (`adoptScopedAccess` + `deinit`) — indispensable pour que deux fenêtres ouvrent des racines
+  différentes simultanément. `BookmarkStore`/`RecentsStore` redeviennent sans état.
+- Entitlement `com.apple.security.network.client` ajouté (pour la vérification de MAJ).
+
+### Notes
+- **Sparkle complet** (deltas + auto-install silencieux) reporté : incompatible « clé en main » avec
+  le sandbox sans XPC + entitlements d'exception + appcast hébergé + clé EdDSA à préserver. Le
+  vérificateur GitHub couvre le besoin « être prévenu + télécharger ».
+
 ## v1.1.0 — 2026-07-05
 
 > Première mise à jour après la 1.0.0. Regroupe l'audit code (corrections de données

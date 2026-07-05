@@ -33,7 +33,7 @@ L'interface reflète ces niveaux dans une disposition à 3 colonnes.
 ```
 project.yml                  # définition XcodeGen (source de vérité)
 Sources/
-  BmadBrowserApp.swift       # point d'entrée @main + commandes de menu
+  BmadBrowserApp.swift       # @main + RootView par fenêtre, commandes de menu, scène Settings
   Models/
     Workspace.swift          # niveau supérieur : racine + projets découverts
     BmadProject.swift         # un projet : URL racine + dossier de sortie résolu
@@ -49,8 +49,9 @@ Sources/
     RecentsStore.swift        # racines récemment ouvertes (bookmarks scoped par entrée)
     FolderWatcher.swift       # surveillance FSEvents pour le rafraîchissement auto
     MarkdownPDFExporter.swift # rend la vue markdown en PDF (ImageRenderer)
+    UpdateChecker.swift       # vérif MAJ via GitHub Releases + comparaison SemVer
   ViewModels/
-    AppState.swift            # @Observable, source unique de l'état UI
+    AppState.swift            # état UI @Observable par fenêtre (+ accès scoped, vérif MAJ)
   Views/
     ContentView.swift         # NavigationSplitView 3 colonnes + Open Recent + dialogue non sauvegardé
     ProjectListView.swift     # colonne 1 : projets du workspace
