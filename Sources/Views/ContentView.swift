@@ -9,6 +9,25 @@ struct ContentView: View {
         return parts.joined(separator: " › ")
     }
 
+    private var updateTitle: String {
+        switch state.updateResult {
+        case .updateAvailable: return String(localized: "Update available")
+        case .failed: return String(localized: "Update check failed")
+        default: return String(localized: "You're up to date")
+        }
+    }
+
+    private var updateMessage: String {
+        switch state.updateResult {
+        case .updateAvailable(let release):
+            return String(localized: "BmadBrowser \(release.version) is available. You have \(UpdateChecker.currentVersion).")
+        case .failed:
+            return String(localized: "Couldn't reach GitHub. Please try again later.")
+        default:
+            return String(localized: "BmadBrowser \(UpdateChecker.currentVersion) is the latest version.")
+        }
+    }
+
     var body: some View {
         NavigationSplitView {
             ProjectListView(state: state)
@@ -67,6 +86,19 @@ struct ContentView: View {
             Button("Discard", role: .destructive) { state.discardAndProceed() }
             Button("Cancel", role: .cancel) { state.cancelPending() }
         }
-        .onAppear { state.restoreLastProject() }
+        .alert(updateTitle, isPresented: $state.showUpdateAlert) {
+            if case .updateAvailable = state.updateResult {
+                Button("Download") { state.openUpdatePage() }
+                Button("Later", role: .cancel) {}
+            } else {
+                Button("OK", role: .cancel) {}
+            }
+        } message: {
+            Text(updateMessage)
+        }
+        .onAppear {
+            state.restoreLastProject()
+            state.autoCheckForUpdatesOnce()
+        }
     }
 }

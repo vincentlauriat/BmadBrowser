@@ -7,6 +7,9 @@ struct BmadBrowserApp: App {
             RootView()
         }
         .commands {
+            CommandGroup(after: .appInfo) {
+                CheckForUpdatesButton()
+            }
             // Conserve « New Window » (⌘N) fourni par WindowGroup, ajoute « Open a Root… ».
             CommandGroup(after: .newItem) {
                 OpenRootButton()
@@ -40,6 +43,18 @@ private struct OpenRootButton: View {
         }
         .keyboardShortcut("o", modifiers: .command)
         .disabled(appState == nil)
+    }
+}
+
+/// Bouton de menu « Check for Updates… » (menu de l'app), sur la fenêtre active.
+private struct CheckForUpdatesButton: View {
+    @FocusedValue(\.appState) private var appState
+
+    var body: some View {
+        Button("Check for Updates…") {
+            appState?.checkForUpdates(userInitiated: true)
+        }
+        .disabled(appState == nil || appState?.isCheckingUpdate == true)
     }
 }
 

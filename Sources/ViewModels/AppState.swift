@@ -48,6 +48,13 @@ final class AppState {
     /// Action à exécuter une fois le sort des modifications en cours tranché.
     private var pendingAction: (() -> Void)?
 
+    // Vérification de mise à jour (via GitHub Releases).
+    var updateResult: UpdateCheckResult?
+    var isCheckingUpdate = false
+    var showUpdateAlert = false
+    /// La vérification automatique au lancement ne s'exécute qu'une fois par process (multi-fenêtres).
+    private static var didAutoCheck = false
+
     // MARK: - Ouverture de projet
 
     func presentOpenPanel() {
@@ -290,6 +297,40 @@ final class AppState {
     func openExternally() {
         guard let node = selection else { return }
         NSWorkspace.shared.open(node.url)
+    }
+
+    // MARK: - Mise à jour
+
+    /// Vérifie s'il existe une version plus récente sur GitHub.
+    /// `userInitiated` : affiche toujours un retour ; sinon, uniquement si une MAJ est disponible.
+    func checkForUpdates(userInitiated: Bool) {
+        guard !isCheckingUpdate else { return }
+        isCheckingUpdate = true
+        Task { @MainActor in
+            let result = await UpdateChecker.check()
+            self.isCheckingUpdate = false
+            self.updateResult = result
+            switch result {
+            case .updateAvailable:
+                self.showUpdateAlert = true
+            case .upToDate, .failed:
+                if userInitiated { self.showUpdateAlert = true }
+            }
+        }
+    }
+
+    /// Vérification automatique au lancement, une seule fois par process.
+    func autoCheckForUpdatesOnce() {
+        guard !Self.didAutoCheck else { return }
+        Self.didAutoCheck = true
+        checkForUpdates(userInitiated: false)
+    }
+
+    /// Ouvre la page de la release proposée.
+    func openUpdatePage() {
+        if case .updateAvailable(let release) = updateResult {
+            NSWorkspace.shared.open(release.pageURL)
+        }
     }
 
     // MARK: - Recherche & filtres
