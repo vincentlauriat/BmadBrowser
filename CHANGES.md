@@ -1,6 +1,12 @@
 # CHANGES — BmadBrowser
 
-## 2026-07-05 (confort v1.2 : préférences, coloration, export, outline)
+## v1.1.0 — 2026-07-05
+
+> Première mise à jour après la 1.0.0. Regroupe l'audit code (corrections de données
+> + confort) et la vague confort (préférences, coloration, export PDF, outline).
+> DMG signé/notarisé publié sur la GitHub Release `v1.1.0`.
+
+### Préférences, coloration, export, outline (2026-07-05)
 
 ### Added
 - **Fenêtre Préférences** (⌘,) : thème de rendu markdown (GitHub / DocC), taille de police de
@@ -22,7 +28,7 @@
 - Export PDF en **une seule page continue** (pas de pagination). Coloration syntaxique heuristique
   (regex, pas un parseur).
 
-## 2026-07-04 (audit code v1.0.0 → corrections & confort)
+### Audit code → corrections données & confort (2026-07-04)
 
 ### Fixed
 - **Sauvegarde markdown non destructive** : `save()` réécrit le bloc frontmatter **brut d'origine**
