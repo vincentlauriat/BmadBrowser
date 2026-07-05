@@ -29,7 +29,10 @@ Outil macOS natif (SwiftUI) pour **naviguer et éditer** les documents produits 
 | ✅ | Édition du frontmatter en formulaire (« Edit metadata ») |
 | ✅ | Recherche plein-texte (nom **et** contenu) + filtre par statut |
 | ✅ | Menu contextuel : révéler dans le Finder, copier le chemin, ouvrir |
-| ✅ | Compteur de mots + temps de lecture sous l'aperçu markdown |
+| ✅ | Sommaire markdown avec saut vers un titre + compteur de mots / temps de lecture |
+| ✅ | Coloration syntaxique json / yaml / toml (en lecture) |
+| ✅ | Export du markdown rendu en PDF |
+| ✅ | Préférences (⌘,) : thème markdown, taille de police éditeur, bascule stats |
 | ✅ | Aperçu inline images (zoom), SVG et PDF |
 | ✅ | Rafraîchissement auto sur changement de fichiers (FSEvents) |
 | ✅ | Menu des racines récentes |
@@ -89,7 +92,7 @@ docs/
 - [x] Édition du frontmatter en formulaire
 - [x] Workspaces / projets récents
 - [x] Rafraîchissement auto sur changement de fichiers (FSEvents)
-- [ ] Outline markdown, coloration syntaxique, export PDF/HTML, préférences
+- [x] Outline markdown, coloration syntaxique, export PDF, préférences
 - [ ] Auto-update Sparkle, multi-fenêtres
 
 > Voir `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) pour la conception détaillée,

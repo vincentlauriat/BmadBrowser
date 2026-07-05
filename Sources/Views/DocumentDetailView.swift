@@ -1,10 +1,26 @@
 import SwiftUI
 import MarkdownUI
+import AppKit
+import UniformTypeIdentifiers
 
 /// Colonne principale : rendu / édition du document sélectionné.
 struct DocumentDetailView: View {
     @Bindable var state: AppState
     @State private var showFrontmatterSheet = false
+
+    @State private var scrollTarget: String?
+
+    @AppStorage(SettingsKeys.editorFontSize) private var editorFontSize: Double = 13
+    @AppStorage(SettingsKeys.markdownTheme) private var markdownTheme: String = MarkdownThemeChoice.gitHub.rawValue
+    @AppStorage(SettingsKeys.showDocumentStats) private var showDocumentStats: Bool = true
+
+    private var selectedTheme: Theme {
+        (MarkdownThemeChoice(rawValue: markdownTheme) ?? .gitHub).theme
+    }
+
+    private var editorFont: Font {
+        .system(size: editorFontSize, design: .monospaced)
+    }
 
     var body: some View {
         Group {
@@ -47,19 +63,40 @@ struct DocumentDetailView: View {
                     get: { state.documentBody },
                     set: { state.documentBody = $0; state.markDirty() }
                 ))
-                .font(.system(.body, design: .monospaced))
+                .font(editorFont)
                 .padding(8)
             } else {
-                ScrollView {
-                    Markdown(state.documentBody)
-                        .markdownTheme(.gitHub)
-                        .markdownImageProvider(LocalImageProvider(baseURL: node.url.deletingLastPathComponent()))
-                        .textSelection(.enabled)
-                        .padding(20)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                markdownPreview(node)
+                if showDocumentStats {
+                    Divider()
+                    statsBar
                 }
-                Divider()
-                statsBar
+            }
+        }
+    }
+
+    /// Aperçu markdown découpé en sections (par titre) pour permettre le défilement vers un titre.
+    private func markdownPreview(_ node: DocumentNode) -> some View {
+        let sections = MarkdownOutline.split(state.documentBody).sections
+        let baseURL = node.url.deletingLastPathComponent()
+        return ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(sections) { section in
+                        Markdown(section.text)
+                            .markdownTheme(selectedTheme)
+                            .markdownImageProvider(LocalImageProvider(baseURL: baseURL))
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .id(section.id)
+                    }
+                }
+                .padding(20)
+            }
+            .onChange(of: scrollTarget) { _, target in
+                guard let target else { return }
+                withAnimation { proxy.scrollTo(target, anchor: .top) }
+                scrollTarget = nil
             }
         }
     }
@@ -121,12 +158,11 @@ struct DocumentDetailView: View {
                     get: { state.documentBody },
                     set: { state.documentBody = $0; state.markDirty() }
                 ))
-                .font(.system(.body, design: .monospaced))
+                .font(editorFont)
                 .padding(8)
             } else {
                 ScrollView([.vertical, .horizontal]) {
-                    Text(state.documentBody)
-                        .font(.system(.body, design: .monospaced))
+                    SyntaxHighlightedText(text: state.documentBody, ext: node.url.pathExtension, fontSize: editorFontSize)
                         .textSelection(.enabled)
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -147,11 +183,46 @@ struct DocumentDetailView: View {
         }
     }
 
+    // MARK: - Export PDF
+
+    private func exportPDF(_ node: DocumentNode) {
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [.pdf]
+        panel.nameFieldStringValue = node.url.deletingPathExtension().lastPathComponent + ".pdf"
+        panel.canCreateDirectories = true
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        let ok = MarkdownPDFExporter.export(
+            body: state.documentBody,
+            theme: selectedTheme,
+            baseURL: node.url.deletingLastPathComponent(),
+            to: url
+        )
+        if !ok {
+            state.errorMessage = String(localized: "PDF export failed.")
+        }
+    }
+
     // MARK: - Toolbar
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItemGroup {
+            if let node = state.selection, node.isMarkdown, !state.isEditing {
+                let headings = MarkdownOutline.split(state.documentBody).headings
+                if !headings.isEmpty {
+                    Menu {
+                        ForEach(headings) { heading in
+                            Button {
+                                scrollTarget = heading.id
+                            } label: {
+                                Text(String(repeating: "    ", count: max(0, heading.level - 1)) + heading.title)
+                            }
+                        }
+                    } label: {
+                        Label("Outline", systemImage: "list.bullet.indent")
+                    }
+                }
+            }
             if let node = state.selection, node.isEditable {
                 if state.isDirty {
                     Text("• edited").font(.caption).foregroundStyle(.orange)
@@ -161,6 +232,13 @@ struct DocumentDetailView: View {
                         showFrontmatterSheet = true
                     } label: {
                         Label("Edit metadata", systemImage: "list.bullet.rectangle")
+                    }
+                }
+                if node.isMarkdown {
+                    Button {
+                        exportPDF(node)
+                    } label: {
+                        Label("Export PDF", systemImage: "arrow.down.doc")
                     }
                 }
                 Button {

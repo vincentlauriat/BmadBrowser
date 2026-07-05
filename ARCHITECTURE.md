@@ -38,7 +38,8 @@ Sources/
     Workspace.swift          # niveau supérieur : racine + projets découverts
     BmadProject.swift         # un projet : URL racine + dossier de sortie résolu
     DocumentNode.swift        # nœud d'arbre (fichier ou dossier)
-    Frontmatter.swift         # métadonnées YAML parsées
+    Frontmatter.swift         # métadonnées YAML parsées + champs scalaires éditables
+    MarkdownOutline.swift     # découpe le corps en sections par titre + sommaire
   Services/
     WorkspaceScanner.swift    # découvre les projets sous une racine
     ProjectScanner.swift      # construit l'arbre de documents d'un projet
@@ -47,19 +48,23 @@ Sources/
     BookmarkStore.swift       # persiste l'accès à la racine (un seul accès scoped actif)
     RecentsStore.swift        # racines récemment ouvertes (bookmarks scoped par entrée)
     FolderWatcher.swift       # surveillance FSEvents pour le rafraîchissement auto
+    MarkdownPDFExporter.swift # rend la vue markdown en PDF (ImageRenderer)
   ViewModels/
     AppState.swift            # @Observable, source unique de l'état UI
   Views/
     ContentView.swift         # NavigationSplitView 3 colonnes + Open Recent + dialogue non sauvegardé
     ProjectListView.swift     # colonne 1 : projets du workspace
     DocumentTreeView.swift    # colonne 2 : arbre + badges, filtre, menu contextuel
-    DocumentDetailView.swift  # colonne 3 : rendu markdown / éditeur + Cmd+S + FrontmatterEditorView
+    DocumentDetailView.swift  # colonne 3 : sections markdown / éditeur + outline + export + FrontmatterEditorView
     MediaViews.swift          # ImageViewer (zoom, SVG) + PDFViewer
+    SettingsView.swift        # fenêtre Préférences (⌘,) : thème, taille police, bascule stats
+    SyntaxHighlightedText.swift # coloration json/yaml/toml en lecture
 Resources/                    # entitlements, catalogue d'assets
   Localizable.xcstrings        # String Catalog : base anglaise + traductions françaises
 Tests/
   FrontmatterParserTests.swift # round-trip + édition des champs scalaires
   ConfigResolverTests.swift    # détection projet + fallbacks du dossier de sortie
+  MarkdownOutlineTests.swift   # extraction des titres + découpage en sections
 Scripts/
   release.sh                   # build Release, signature Developer ID, notarisation, packaging DMG
 docs/

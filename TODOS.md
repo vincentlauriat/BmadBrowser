@@ -61,11 +61,13 @@
 - [x] **Menu contextuel sur les nœuds** — Révéler dans le Finder, Copier le chemin, Ouvrir.
 - [x] **Compteur de mots + temps de lecture** sous l'aperçu markdown.
 - [x] **Rendu SVG** inline dans la visionneuse d'image.
-- [ ] **Sommaire / outline des titres markdown** (H1–H3) — nécessite un rendu par section pour
-      le scroll-to-heading (MarkdownUI rend un bloc unique) ; reporté.
-- [ ] **Coloration syntaxique** pour les fichiers texte (json / yaml / toml) en lecture.
-- [ ] **Export** du markdown rendu (PDF / HTML).
-- [ ] **Réglages / Preferences** — thème markdown, taille de police de l'éditeur, dossier par défaut.
+- [x] **Sommaire / outline des titres markdown** — `MarkdownOutline` découpe le corps en sections
+      (par titre, blocs de code ignorés) rendues dans un `ScrollViewReader` ; menu Outline avec
+      scroll-to-heading.
+- [x] **Coloration syntaxique** json / yaml / toml en lecture (`SyntaxHighlighter` → `AttributedString`).
+- [x] **Export PDF** du markdown rendu (`MarkdownPDFExporter` via `ImageRenderer`, page continue).
+- [x] **Réglages / Preferences** (⌘,) — thème markdown (GitHub/DocC), taille de police éditeur,
+      affichage de la barre de stats.
 
 ## 🟢 Évolutions techniques / qualité
 - [x] **Tests** — target `BmadBrowserTests` + scheme ; `FrontmatterParser` (round-trip, champs
@@ -76,6 +78,12 @@
 - [ ] **Auto-update Sparkle** — cohérent avec les autres apps `~/DevApps` ; reporté (touche la
       release + clé EdDSA à ne jamais régénérer). À faire dans une passe distribution dédiée.
 - [ ] **Support multi-fenêtres** (`WindowGroup` + état par fenêtre) pour comparer deux projets.
+
+## Limitations connues
+- **Export PDF** : `ImageRenderer` produit **une seule page continue** (pas de pagination A4/Lettre).
+  Suffisant pour partage/archive ; une vraie pagination nécessiterait un moteur d'impression dédié.
+- **Coloration syntaxique** : heuristique ligne/regex simple (pas un vrai parseur) ; un `#` dans une
+  chaîne yaml/toml peut être vu comme un commentaire. Acceptable pour des fichiers de config BMad.
 
 ## Test manuel restant
 - [ ] Lancer l'app et ouvrir un projet réel (ex: `~/Documents/GitHub/clarify`) pour valider l'UX
