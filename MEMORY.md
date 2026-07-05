@@ -1,7 +1,8 @@
 ---
 project: BmadBrowser
 last_updated: 2026-07-05
-phase: "v1.1.0 : audit → corrections données + confort (recherche, filtres, frontmatter formulaire, récents, FSEvents, SVG) + préférences, coloration syntaxique, export PDF, outline + tests + SwiftLint — build vert, 14 tests verts, DMG notarisé"
+version: "1.2.0"
+phase: "v1.2.0 : multi-fenêtres (état + accès scoped par fenêtre) + vérification de MAJ in-app (GitHub Releases) ; sur base v1.1.0 (corrections données + confort). Build vert, 18 tests verts, DMG notarisé"
 ---
 
 # MEMORY — BmadBrowser
