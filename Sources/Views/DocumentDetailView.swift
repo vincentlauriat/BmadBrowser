@@ -8,6 +8,8 @@ struct DocumentDetailView: View {
     @Bindable var state: AppState
     @State private var showFrontmatterSheet = false
 
+    @State private var scrollTarget: String?
+
     @AppStorage(SettingsKeys.editorFontSize) private var editorFontSize: Double = 13
     @AppStorage(SettingsKeys.markdownTheme) private var markdownTheme: String = MarkdownThemeChoice.gitHub.rawValue
     @AppStorage(SettingsKeys.showDocumentStats) private var showDocumentStats: Bool = true
@@ -64,18 +66,37 @@ struct DocumentDetailView: View {
                 .font(editorFont)
                 .padding(8)
             } else {
-                ScrollView {
-                    Markdown(state.documentBody)
-                        .markdownTheme(selectedTheme)
-                        .markdownImageProvider(LocalImageProvider(baseURL: node.url.deletingLastPathComponent()))
-                        .textSelection(.enabled)
-                        .padding(20)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+                markdownPreview(node)
                 if showDocumentStats {
                     Divider()
                     statsBar
                 }
+            }
+        }
+    }
+
+    /// Aperçu markdown découpé en sections (par titre) pour permettre le défilement vers un titre.
+    private func markdownPreview(_ node: DocumentNode) -> some View {
+        let sections = MarkdownOutline.split(state.documentBody).sections
+        let baseURL = node.url.deletingLastPathComponent()
+        return ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(sections) { section in
+                        Markdown(section.text)
+                            .markdownTheme(selectedTheme)
+                            .markdownImageProvider(LocalImageProvider(baseURL: baseURL))
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .id(section.id)
+                    }
+                }
+                .padding(20)
+            }
+            .onChange(of: scrollTarget) { _, target in
+                guard let target else { return }
+                withAnimation { proxy.scrollTo(target, anchor: .top) }
+                scrollTarget = nil
             }
         }
     }
@@ -186,6 +207,22 @@ struct DocumentDetailView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItemGroup {
+            if let node = state.selection, node.isMarkdown, !state.isEditing {
+                let headings = MarkdownOutline.split(state.documentBody).headings
+                if !headings.isEmpty {
+                    Menu {
+                        ForEach(headings) { heading in
+                            Button {
+                                scrollTarget = heading.id
+                            } label: {
+                                Text(String(repeating: "    ", count: max(0, heading.level - 1)) + heading.title)
+                            }
+                        }
+                    } label: {
+                        Label("Outline", systemImage: "list.bullet.indent")
+                    }
+                }
+            }
             if let node = state.selection, node.isEditable {
                 if state.isDirty {
                     Text("• edited").font(.caption).foregroundStyle(.orange)
