@@ -70,12 +70,17 @@ STAGING="$STAGING_DIR/BmadBrowser.app"
 echo "→ Staging to $STAGING_DIR"
 ditto --norsrc --noextattr --noacl "$APP" "$STAGING"
 
-# codesign helper with retry (Apple timestamp server is occasionally flaky)
+# codesign helper with retry (Apple timestamp server is occasionally flaky).
+# Optional 2nd arg = entitlements plist (applied to the app only, not the frameworks).
 codesign_ts() {
   local target="$1"
+  local entitlements="${2:-}"
+  local ent_args=()
+  [ -n "$entitlements" ] && ent_args=(--entitlements "$entitlements")
   local attempt
   for attempt in 1 2 3 4 5; do
-    if codesign --force --options runtime --timestamp --sign "$SIGNING_IDENTITY" "$target" 2>&1; then
+    if codesign --force --options runtime --timestamp \
+        ${ent_args[@]+"${ent_args[@]}"} --sign "$SIGNING_IDENTITY" "$target" 2>&1; then
       return 0
     fi
     if [ "$attempt" -lt 5 ]; then
@@ -100,9 +105,21 @@ if [ -d "$STAGING/Contents/Frameworks" ]; then
   done
 fi
 
-echo "→ Codesigning the app itself with Developer ID + Hardened Runtime"
-codesign_ts "$STAGING"
+echo "→ Codesigning the app itself with Developer ID + Hardened Runtime + entitlements"
+ENTITLEMENTS="$ROOT/Resources/BmadBrowser.entitlements"
+if [ ! -f "$ENTITLEMENTS" ]; then
+  echo "✗ Entitlements not found: $ENTITLEMENTS" >&2
+  exit 1
+fi
+codesign_ts "$STAGING" "$ENTITLEMENTS"
 codesign --verify --strict --deep "$STAGING"
+
+# Sanity: the sandbox entitlement must actually be embedded now.
+if ! codesign -d --entitlements - --xml "$STAGING" 2>/dev/null | grep -q "com.apple.security.app-sandbox"; then
+  echo "✗ Sandbox entitlement missing from the signed app" >&2
+  exit 1
+fi
+echo "  ✓ sandbox + entitlements embedded"
 
 # 6. Package the signed app into a DMG (with an /Applications alias for drag-install)
 RELEASE_DIR="$ROOT/release"

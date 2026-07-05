@@ -4,6 +4,14 @@
 
 > DMG signé/notarisé publié sur la GitHub Release `v1.2.0`.
 
+### Fixed (packaging)
+- **App réellement sandboxée** : `Scripts/release.sh` ne passait jamais `--entitlements` à la
+  signature manuelle (le build utilise `CODE_SIGNING_ALLOWED=NO`), si bien que les DMG précédents
+  (v1.0.0/v1.1.0) étaient signés **sans entitlements** — donc non sandboxés malgré la conception.
+  Le script applique désormais `Resources/BmadBrowser.entitlements` à l'app (pas aux frameworks) et
+  vérifie que l'entitlement `app-sandbox` est bien embarqué. v1.2.0 est le premier DMG réellement
+  sandboxé (app-sandbox + bookmarks + user-selected + network.client).
+
 ### Added
 - **Multi-fenêtres** : chaque fenêtre a son propre `AppState` (workspace/sélection indépendants),
   via `RootView` ; « New Window » (⌘N) restauré, « Open a Root… » cible la fenêtre active
