@@ -1,7 +1,7 @@
 ---
 project: BmadBrowser
-last_updated: 2026-07-04
-phase: "post-v1.0.0 : audit code → corrections données + confort (recherche plein-texte, filtres, frontmatter en formulaire, récents, FSEvents, SVG) + tests + SwiftLint — build vert, 9 tests verts"
+last_updated: 2026-07-05
+phase: "post-v1.0.0 : audit → corrections données + confort (recherche, filtres, frontmatter formulaire, récents, FSEvents, SVG) + confort v1.2 (préférences, coloration syntaxique, export PDF, outline) + tests + SwiftLint — build vert, 14 tests verts"
 ---
 
 # MEMORY — BmadBrowser
@@ -34,7 +34,8 @@ Outil macOS natif (SwiftUI) pour naviguer **et éditer** les documents markdown 
 - Build `xcodebuild` vert, 0 erreur ; suite de tests verte (9 tests).
 - Implémenté : phases 1-4 + aperçu images/PDF/SVG + workspace multi-projets + AppIcon + affichage/édition fichiers texte (yaml/json/txt/csv/toml) + i18n EN/FR + distribution notarisée.
 - **v1.0.0 publiée** : dépôt GitHub public (MIT), GitHub Release v1.0.0 avec DMG signé/notarisé, landing page GitHub Pages, portfolio github.io + lauriat.fr.
-- **Post-v1.0.0 (branche `feat/audit-fixes-v1.1`, non mergée)** : audit code → 🔴 corrections données (round-trip frontmatter fidèle via `rawBlock`, confirmation modifs non sauvegardées, fuite scoped-access, badge rafraîchi) + 🟠 confort (recherche plein-texte, filtre statut, frontmatter en formulaire, menu contextuel, compteur mots/lecture, projets récents, FSEvents auto-reload) + 🟢 tests + SwiftLint + refactor. Reste reporté : outline markdown, coloration syntaxique, export PDF/HTML, préférences, Sparkle, multi-fenêtres.
+- **Post-v1.0.0 (branche `feat/audit-fixes-v1.1`, mergée dans `main`)** : audit code → 🔴 corrections données (round-trip frontmatter fidèle via `rawBlock`, confirmation modifs non sauvegardées, fuite scoped-access, badge rafraîchi) + 🟠 confort (recherche plein-texte, filtre statut, frontmatter en formulaire, menu contextuel, compteur mots/lecture, projets récents, FSEvents auto-reload) + 🟢 tests + SwiftLint + refactor.
+- **Confort v1.2 (branche `feat/comfort-v1.2`)** : préférences (⌘, thème markdown/police/stats via `@AppStorage`), coloration syntaxique json/yaml/toml (`SyntaxHighlighter`), export PDF (`MarkdownPDFExporter` via `ImageRenderer`, page continue), sommaire/outline (`MarkdownOutline` → rendu par sections + `ScrollViewReader`). **Reste reporté** : Sparkle auto-update, multi-fenêtres. Limitations : PDF une page continue, coloration heuristique.
 
 ## Pièges connus
 - Récursion de vue + `some View` → utiliser `List(_:children:selection:)` natif, pas une fonction `@ViewBuilder` qui s'appelle elle-même.

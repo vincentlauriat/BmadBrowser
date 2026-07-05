@@ -38,7 +38,8 @@ Sources/
     Workspace.swift          # top level: root + discovered projects
     BmadProject.swift         # a project: root URL + resolved output folder
     DocumentNode.swift        # tree node (file or directory)
-    Frontmatter.swift         # parsed YAML metadata
+    Frontmatter.swift         # parsed YAML metadata + editable scalar fields
+    MarkdownOutline.swift     # splits body into per-heading sections + headings
   Services/
     WorkspaceScanner.swift    # discovers projects under a root
     ProjectScanner.swift      # builds the document tree of a project
@@ -47,19 +48,23 @@ Sources/
     BookmarkStore.swift       # persists access to the workspace root (single scoped access)
     RecentsStore.swift        # recently opened roots (per-entry scoped bookmarks)
     FolderWatcher.swift       # FSEvents watcher for auto-refresh
+    MarkdownPDFExporter.swift # renders the markdown view to PDF (ImageRenderer)
   ViewModels/
     AppState.swift            # @Observable single source of UI state
   Views/
     ContentView.swift         # 3-column NavigationSplitView + Open Recent + unsaved dialog
     ProjectListView.swift     # column 1: projects of the workspace
     DocumentTreeView.swift    # column 2: document tree + status badges, filter, context menu
-    DocumentDetailView.swift  # column 3: markdown render / editor + Cmd+S + FrontmatterEditorView
+    DocumentDetailView.swift  # column 3: markdown sections / editor + outline + export + FrontmatterEditorView
     MediaViews.swift          # ImageViewer (zoom, SVG) + PDFViewer
+    SettingsView.swift        # Preferences window (⌘,): theme, font size, stats toggle
+    SyntaxHighlightedText.swift # json/yaml/toml read-mode highlighting
 Resources/                    # entitlements, asset catalog
   Localizable.xcstrings        # String Catalog: English base + French translations
 Tests/
   FrontmatterParserTests.swift # round-trip + scalar-field editing
   ConfigResolverTests.swift    # project detection + output-folder fallbacks
+  MarkdownOutlineTests.swift   # heading extraction + section split
 Scripts/
   release.sh                   # Release build, Developer ID signing, notarization, DMG packaging
 docs/

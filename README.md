@@ -29,7 +29,10 @@ Native macOS (SwiftUI) app to **browse and edit** the documents produced by the 
 | ✅ | Frontmatter editing as a form ("Edit metadata") |
 | ✅ | Full-text search (name **and** content) + filter by status |
 | ✅ | Context menu: reveal in Finder, copy path, open in default app |
-| ✅ | Word count + reading time under the markdown preview |
+| ✅ | Markdown outline with jump-to-heading + word count / reading time |
+| ✅ | Syntax highlighting for json / yaml / toml (read mode) |
+| ✅ | Export the rendered markdown to PDF |
+| ✅ | Preferences (⌘,): markdown theme, editor font size, stats toggle |
 | ✅ | Inline image (zoom), SVG and PDF preview |
 | ✅ | Auto-refresh on external file changes (FSEvents) |
 | ✅ | Recent roots menu |
@@ -89,7 +92,7 @@ docs/
 - [x] Frontmatter editing as a form
 - [x] Recent workspaces / projects
 - [x] Auto-refresh on file changes (FSEvents)
-- [ ] Markdown outline, syntax highlighting, PDF/HTML export, preferences
+- [x] Markdown outline, syntax highlighting, PDF export, preferences
 - [ ] Sparkle auto-update, multi-window
 
 > See `ARCHITECTURE.md` (FR) / `ARCHITECTURE_EN.md` (EN) for the detailed design,

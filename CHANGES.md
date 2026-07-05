@@ -1,5 +1,27 @@
 # CHANGES — BmadBrowser
 
+## 2026-07-05 (confort v1.2 : préférences, coloration, export, outline)
+
+### Added
+- **Fenêtre Préférences** (⌘,) : thème de rendu markdown (GitHub / DocC), taille de police de
+  l'éditeur, bascule de la barre de statistiques (`SettingsView` + `@AppStorage`).
+- **Coloration syntaxique** en lecture pour `json` / `yaml` / `toml` (`SyntaxHighlighter` →
+  `AttributedString`, couleurs système adaptées clair/sombre).
+- **Export PDF** du markdown rendu (`MarkdownPDFExporter` via `ImageRenderer` — page continue) ;
+  bouton « Export PDF » + `NSSavePanel`.
+- **Sommaire (outline)** des titres markdown : `MarkdownOutline` découpe le corps en sections
+  (par titre, blocs de code ignorés) rendues dans un `ScrollViewReader` ; menu Outline avec
+  défilement vers le titre choisi.
+- Tests : `MarkdownOutlineTests` (niveaux, blocs de code, préambule, round-trip) — total 14 tests verts.
+
+### Changed
+- L'aperçu markdown est désormais rendu **section par section** (au lieu d'un bloc unique) pour
+  permettre le scroll-to-heading ; le thème et la police suivent les préférences.
+
+### Limitations
+- Export PDF en **une seule page continue** (pas de pagination). Coloration syntaxique heuristique
+  (regex, pas un parseur).
+
 ## 2026-07-04 (audit code v1.0.0 → corrections & confort)
 
 ### Fixed
