@@ -28,6 +28,21 @@ final class AppState {
     /// Surveillance FSEvents de la racine pour le rafraîchissement automatique.
     private var watcher: FolderWatcher?
 
+    /// URL dont cette fenêtre détient l'accès security-scoped (une par `AppState`).
+    private var scopedURL: URL?
+
+    deinit {
+        scopedURL?.stopAccessingSecurityScopedResource()
+        watcher?.stop()
+    }
+
+    /// Adopte l'accès scoped de `url` (déjà démarré par l'appelant) et libère le précédent.
+    /// `nil` = libère simplement l'accès courant (ex. ouverture d'une racine via le panneau).
+    private func adoptScopedAccess(_ url: URL?) {
+        if scopedURL != url { scopedURL?.stopAccessingSecurityScopedResource() }
+        scopedURL = url
+    }
+
     /// Dialogue « modifications non enregistrées » affiché avant une navigation destructive.
     var showUnsavedDialog = false
     /// Action à exécuter une fois le sort des modifications en cours tranché.
@@ -43,8 +58,8 @@ final class AppState {
         panel.prompt = String(localized: "Open")
         panel.message = String(localized: "Choose a root containing one or more BMad projects")
         if panel.runModal() == .OK, let url = panel.url {
-            // Nouvelle racine du panneau : libère l'accès scoped restauré précédent.
-            BookmarkStore.stopCurrentAccess()
+            // Racine du panneau : accessible pour la session, on libère juste l'accès précédent.
+            adoptScopedAccess(nil)
             open(rootURL: url, persist: true)
         }
     }
@@ -55,6 +70,7 @@ final class AppState {
             errorMessage = String(localized: "Couldn't reopen \(recent.name). The folder may have moved.")
             return
         }
+        adoptScopedAccess(url)
         open(rootURL: url, persist: true)
     }
 
@@ -64,6 +80,7 @@ final class AppState {
     /// Restaure le dernier workspace ouvert au démarrage (si bookmark disponible).
     func restoreLastProject() {
         if let url = BookmarkStore.restore() {
+            adoptScopedAccess(url)
             open(rootURL: url, persist: false)
         }
     }
