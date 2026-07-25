@@ -59,6 +59,14 @@
   .featured{grid-column:1/-1;background:linear-gradient(135deg,#16204a,#1a1440);border-color:#33407a}
   footer{padding:40px 0 64px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:.9rem}
   footer a{color:var(--accent);font-weight:600}
+
+  /* a11y : respecter la préférence système de mouvement réduit */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{
+      animation-duration:.01ms !important;animation-iteration-count:1 !important;
+      transition-duration:.01ms !important;scroll-behavior:auto !important;
+    }
+  }
 </style>
 </head>
 <body class="lang-en">
@@ -99,49 +107,49 @@
 <div class="wrap"><div class="grid">
 
   <article class="card featured">
-    <div class="top"><div class="emoji">🗂️</div>
+    <div class="top"><div class="emoji" aria-hidden="true">🗂️</div>
       <h3><span class="en">Multi-project workspace</span><span class="fr">Workspace multi-projets</span></h3></div>
     <p><span class="en">A focused 3-column UI — Projects, Documents, Detail — built to browse and edit BMad artifacts without leaving the flow.</span>
        <span class="fr">Une UI en 3 colonnes — Projets, Documents, Détail — pensée pour parcourir et éditer les artefacts BMad sans rompre le flux.</span></p>
   </article>
 
   <article class="card">
-    <div class="top"><div class="emoji">🔍</div>
+    <div class="top"><div class="emoji" aria-hidden="true">🔍</div>
       <h3><span class="en">Auto-detection</span><span class="fr">Détection automatique</span></h3></div>
     <p><span class="en">Finds your projects and the BMad output folder automatically (<code>_bmad/config.toml</code>, <code>docs/</code>, <code>_bmad-output/</code>).</span>
        <span class="fr">Détecte automatiquement vos projets et le dossier de sortie BMad (<code>_bmad/config.toml</code>, <code>docs/</code>, <code>_bmad-output/</code>).</span></p>
   </article>
 
   <article class="card">
-    <div class="top"><div class="emoji">📝</div>
+    <div class="top"><div class="emoji" aria-hidden="true">📝</div>
       <h3><span class="en">Rich markdown</span><span class="fr">Rendu markdown riche</span></h3></div>
     <p><span class="en">Clean markdown rendering with text selection, so you can read and copy from your artifacts naturally.</span>
        <span class="fr">Rendu markdown soigné avec sélection de texte, pour lire et copier vos artefacts naturellement.</span></p>
   </article>
 
   <article class="card">
-    <div class="top"><div class="emoji">🖼️</div>
+    <div class="top"><div class="emoji" aria-hidden="true">🖼️</div>
       <h3><span class="en">Image &amp; PDF preview</span><span class="fr">Aperçu images &amp; PDF</span></h3></div>
     <p><span class="en">Built-in preview for images and PDFs — no need to switch apps to check a diagram or a spec.</span>
        <span class="fr">Aperçu intégré pour les images et les PDF — pas besoin de changer d'app pour vérifier un schéma ou une spec.</span></p>
   </article>
 
   <article class="card">
-    <div class="top"><div class="emoji">✏️</div>
+    <div class="top"><div class="emoji" aria-hidden="true">✏️</div>
       <h3><span class="en">Edit &amp; save</span><span class="fr">Édition &amp; sauvegarde</span></h3></div>
     <p><span class="en">Edit and save (⌘S) text files — yaml, json, txt, csv, toml, md — right where they live.</span>
        <span class="fr">Éditez et sauvegardez (⌘S) les fichiers texte — yaml, json, txt, csv, toml, md — là où ils se trouvent.</span></p>
   </article>
 
   <article class="card">
-    <div class="top"><div class="emoji">🏷️</div>
+    <div class="top"><div class="emoji" aria-hidden="true">🏷️</div>
       <h3><span class="en">Frontmatter badges</span><span class="fr">Badges de frontmatter</span></h3></div>
     <p><span class="en">YAML frontmatter surfaced as badges (status, type, date) plus filter by name to find documents fast.</span>
        <span class="fr">Le frontmatter YAML affiché en badges (statut, type, date), avec filtre par nom pour retrouver un document vite.</span></p>
   </article>
 
   <article class="card">
-    <div class="top"><div class="emoji">🌐</div>
+    <div class="top"><div class="emoji" aria-hidden="true">🌐</div>
       <h3><span class="en">Bilingual EN/FR</span><span class="fr">Bilingue EN/FR</span></h3></div>
     <p><span class="en"><b>Bilingual interface</b> that remembers your last opened project between sessions.</span>
        <span class="fr">Une <b>interface bilingue</b> qui se souvient du dernier projet ouvert entre les sessions.</span></p>
