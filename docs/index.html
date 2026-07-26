@@ -36,13 +36,39 @@
   .langtog button{background:transparent;color:var(--muted);border:0;padding:5px 12px;font-size:.82rem;cursor:pointer;font-weight:600}
   .langtog button.on{background:var(--accent);color:var(--on-accent)}
   .ghlink{color:var(--muted);font-size:.9rem;font-weight:600}
-  header{padding:72px 0 40px;text-align:center}
-  .icon{width:96px;height:96px;border-radius:22px;margin:0 auto 24px;display:block;
-    box-shadow:0 12px 32px rgba(56,189,248,.28);border:1px solid var(--line)}
-  h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
+  header{padding:64px 0 44px}
+  .hero{display:grid;grid-template-columns:1.02fr .98fr;gap:46px;align-items:center}
+  @media (max-width:900px){.hero{grid-template-columns:1fr;gap:34px}}
+  .icon{width:44px;height:44px;border-radius:11px;display:block;margin-bottom:18px;
+    box-shadow:0 8px 22px rgba(56,189,248,.22);border:1px solid var(--line)}
+  h1{font-size:clamp(1.95rem,4.2vw,2.85rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:16px}
   h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .tagline{font-size:clamp(1.05rem,2.4vw,1.3rem);color:var(--muted);max-width:640px;margin:0 auto}
-  .cta-row{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:36px}
+  .tagline{font-size:clamp(1rem,2vw,1.12rem);color:var(--muted);max-width:520px}
+  .cta-row{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:30px}
+
+  /* Démonstration : l'UI 3 colonnes, qui est l'argument du produit */
+  .shot{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,.55)}
+  .shot .bar{display:flex;align-items:center;gap:6px;padding:9px 12px;
+    border-bottom:1px solid var(--line);background:var(--bg2)}
+  .shot .dot{width:9px;height:9px;border-radius:50%;background:#33407a;flex:none}
+  .shot .ttl{margin-left:6px;font-family:var(--font-mono);font-size:9.5px;color:var(--muted)}
+  .shot .cols{display:grid;grid-template-columns:.82fr 1.02fr 1.3fr;min-height:252px}
+  .shot .col{border-right:1px solid var(--line);padding:10px 0;min-width:0}
+  .shot .col:last-child{border-right:0}
+  .shot .ch{font-family:var(--font-mono);font-size:8.5px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.11em;color:var(--muted);padding:0 11px 8px}
+  .shot .it{padding:5px 11px;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .shot .it.on{background:rgba(56,189,248,.13);color:var(--txt);box-shadow:inset 2px 0 0 var(--accent)}
+  .shot .bdg{font-family:var(--font-mono);font-size:8px;padding:1px 5px;border-radius:4px;
+    background:rgba(56,189,248,.16);color:var(--accent);margin-left:auto;flex:none}
+  .shot .doc{padding:2px 13px}
+  .shot .doc .h{font-size:13px;font-weight:800;color:var(--txt);letter-spacing:-.01em;margin-bottom:7px}
+  .shot .doc .meta{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+  .shot .doc .meta span{font-family:var(--font-mono);font-size:8px;padding:1px 6px;border-radius:4px;
+    border:1px solid var(--line);color:var(--muted)}
+  .shot .doc .ln{height:5px;border-radius:3px;background:#222c50;margin-bottom:6px}
   .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:1.02rem;
     padding:14px 28px;border-radius:999px;transition:transform .14s ease,box-shadow .2s ease}
   .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--on-accent);
@@ -60,7 +86,6 @@
     background:linear-gradient(135deg,#1c2648,#243056);border:1px solid var(--line);border-radius:12px;flex-shrink:0}
   .card h3{font-size:1.15rem}
   .card p{color:var(--muted);font-size:.93rem;margin:0}
-  .featured{grid-column:1/-1;background:linear-gradient(135deg,#16204a,#1a1440);border-color:#33407a}
   footer{padding:40px 0 64px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:.9rem}
   footer a{color:var(--accent);font-weight:600}
 </style>
@@ -78,37 +103,74 @@
   <a class="ghlink" href="https://github.com/vincentlauriat/BmadBrowser" target="_blank" rel="noopener">GitHub ↗</a>
 </div></nav>
 
-<header id="top"><div class="wrap">
-  <img class="icon" src="icon.png" alt="BmadBrowser app icon">
-  <h1><span class="grad">BmadBrowser</span></h1>
-  <p class="tagline">
-    <span class="en">Native macOS browser &amp; editor for BMad method markdown artifacts.</span>
-    <span class="fr">Navigateur &amp; éditeur macOS natif pour les artefacts markdown de la méthode BMad.</span>
-  </p>
-  <div class="cta-row">
-    <a class="btn btn-primary" href="https://github.com/vincentlauriat/BmadBrowser/releases/latest/download/BmadBrowser.dmg">
-      <span class="en">⬇ Download for macOS</span>
-      <span class="fr">⬇ Télécharger pour macOS</span>
-    </a>
-    <p class="subtext">
-      <span class="en">macOS 14+ · Apple Silicon &amp; Intel · Signed &amp; notarized</span>
-      <span class="fr">macOS 14+ · Apple Silicon &amp; Intel · Signée &amp; notarisée</span>
+<header id="top"><div class="wrap hero">
+  <div>
+    <img class="icon" src="icon.png" alt="BmadBrowser app icon">
+    <h1>
+      <span class="en">Browse and edit BMad artifacts <span class="grad">without leaving the flow.</span></span>
+      <span class="fr">Parcourez et éditez vos artefacts BMad <span class="grad">sans rompre le flux.</span></span>
+    </h1>
+    <p class="tagline">
+      <span class="en">A focused 3-column UI — Projects, Documents, Detail — for the markdown the BMad method leaves behind. Native macOS, no Electron.</span>
+      <span class="fr">Une UI en 3 colonnes — Projets, Documents, Détail — pour le markdown que laisse la méthode BMad. Natif macOS, sans Electron.</span>
     </p>
-    <a class="btn btn-secondary" href="https://github.com/vincentlauriat/BmadBrowser" target="_blank" rel="noopener">
-      <span class="en">View on GitHub</span>
-      <span class="fr">Voir sur GitHub</span>
-    </a>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/vincentlauriat/BmadBrowser/releases/latest/download/BmadBrowser.dmg">
+        <span class="en">⬇ Download for macOS</span>
+        <span class="fr">⬇ Télécharger pour macOS</span>
+      </a>
+      <p class="subtext">
+        <span class="en">macOS 14+ · Apple Silicon &amp; Intel · Signed &amp; notarized</span>
+        <span class="fr">macOS 14+ · Apple Silicon &amp; Intel · Signée &amp; notarisée</span>
+      </p>
+      <a class="btn btn-secondary" href="https://github.com/vincentlauriat/BmadBrowser" target="_blank" rel="noopener">
+        <span class="en">View on GitHub</span>
+        <span class="fr">Voir sur GitHub</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="shot" aria-hidden="true">
+    <div class="bar">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="ttl">BmadBrowser</span>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <div class="ch"><span class="en">Projects</span><span class="fr">Projets</span></div>
+        <div class="it">NetCheck</div>
+        <div class="it on">MoveApps</div>
+        <div class="it">StartAlice</div>
+        <div class="it">WifiManager</div>
+      </div>
+      <div class="col">
+        <div class="ch"><span class="en">Documents</span><span class="fr">Documents</span></div>
+        <div class="it on">prd.md <span class="bdg">done</span></div>
+        <div class="it">architecture.md <span class="bdg">wip</span></div>
+        <div class="it">epic-2.md</div>
+        <div class="it">ux-spec.md</div>
+        <div class="it">diagram.png</div>
+      </div>
+      <div class="col">
+        <div class="ch"><span class="en">Detail</span><span class="fr">Détail</span></div>
+        <div class="doc">
+          <div class="h">Product Requirements</div>
+          <div class="meta"><span>status: done</span><span>type: prd</span><span>2026-07-12</span></div>
+          <div class="ln" style="width:100%"></div>
+          <div class="ln" style="width:92%"></div>
+          <div class="ln" style="width:97%"></div>
+          <div class="ln" style="width:64%"></div>
+          <div class="ln" style="width:88%;margin-top:12px"></div>
+          <div class="ln" style="width:78%"></div>
+          <div class="ln" style="width:95%"></div>
+          <div class="ln" style="width:47%"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div></header>
 
 <div class="wrap"><div class="grid">
-
-  <article class="card featured">
-    <div class="top"><div class="emoji" aria-hidden="true">🗂️</div>
-      <h3><span class="en">Multi-project workspace</span><span class="fr">Workspace multi-projets</span></h3></div>
-    <p><span class="en">A focused 3-column UI — Projects, Documents, Detail — built to browse and edit BMad artifacts without leaving the flow.</span>
-       <span class="fr">Une UI en 3 colonnes — Projets, Documents, Détail — pensée pour parcourir et éditer les artefacts BMad sans rompre le flux.</span></p>
-  </article>
 
   <article class="card">
     <div class="top"><div class="emoji" aria-hidden="true">🔍</div>
