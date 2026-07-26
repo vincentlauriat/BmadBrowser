@@ -24,9 +24,7 @@
     color:var(--txt);line-height:1.6;-webkit-font-smoothing:antialiased}
   a{color:inherit;text-decoration:none}
   .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-  .en,.fr{display:none}
-  body.lang-en .en{display:revert}
-  body.lang-fr .fr{display:revert}
+  /* Les regles de bascule de langue vivent desormais dans base.css v1.0.3. */
   nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);
     background:rgba(11,16,32,.72);border-bottom:1px solid var(--line)}
   nav .wrap{display:flex;align-items:center;gap:16px;height:60px}
@@ -91,14 +89,15 @@
 </style>
 </head>
 <body class="lang-en">
-<a class="skip" href="#top"><span class="en">Skip to content</span><span class="fr">Aller au contenu</span></a>
+<a class="skip" href="#top"><span class="en">Skip to content</span><span class="fr">Aller au contenu</span><span class="zh">跳至內容</span></a>
 
 <nav><div class="wrap">
   <b>BmadBrowser</b>
   <div class="spacer"></div>
-  <div class="langtog">
-    <button id="l-en" class="on" onclick="setLang('en')">EN</button>
-    <button id="l-fr" onclick="setLang('fr')">FR</button>
+  <div class="langtog" role="group" aria-label="Language / Langue / 語言">
+    <button type="button" data-lang="en" class="on" onclick="setLang('en')">EN</button>
+    <button type="button" data-lang="fr" onclick="setLang('fr')">FR</button>
+    <button type="button" data-lang="zh" onclick="setLang('zh')">中文</button>
   </div>
   <a class="ghlink" href="https://github.com/vincentlauriat/BmadBrowser" target="_blank" rel="noopener">GitHub ↗</a>
 </div></nav>
@@ -108,24 +107,24 @@
     <img class="icon" src="icon.png" alt="BmadBrowser app icon">
     <h1>
       <span class="en">Browse and edit BMad artifacts <span class="grad">without leaving the flow.</span></span>
-      <span class="fr">Parcourez et éditez vos artefacts BMad <span class="grad">sans rompre le flux.</span></span>
+      <span class="fr">Parcourez et éditez vos artefacts BMad <span class="grad">sans rompre le flux.</span></span><span class="zh">瀏覽並編輯你的 BMad 產出物，<span class="grad">不打斷心流。</span></span>
     </h1>
     <p class="tagline">
       <span class="en">A focused 3-column UI — Projects, Documents, Detail — for the markdown the BMad method leaves behind. Native macOS, no Electron.</span>
-      <span class="fr">Une UI en 3 colonnes — Projets, Documents, Détail — pour le markdown que laisse la méthode BMad. Natif macOS, sans Electron.</span>
+      <span class="fr">Une UI en 3 colonnes — Projets, Documents, Détail — pour le markdown que laisse la méthode BMad. Natif macOS, sans Electron.</span><span class="zh">三欄式介面——專案、文件、詳細內容——為 BMad 方法留下的 markdown 而設計。原生 macOS，不使用 Electron。</span>
     </p>
     <div class="cta-row">
       <a class="btn btn-primary" href="https://github.com/vincentlauriat/BmadBrowser/releases/latest/download/BmadBrowser.dmg">
         <span class="en">⬇ Download for macOS</span>
-        <span class="fr">⬇ Télécharger pour macOS</span>
+        <span class="fr">⬇ Télécharger pour macOS</span><span class="zh">⬇ 下載 macOS 版</span>
       </a>
       <p class="subtext">
         <span class="en">macOS 14+ · Apple Silicon &amp; Intel · Signed &amp; notarized</span>
-        <span class="fr">macOS 14+ · Apple Silicon &amp; Intel · Signée &amp; notarisée</span>
+        <span class="fr">macOS 14+ · Apple Silicon &amp; Intel · Signée &amp; notarisée</span><span class="zh">macOS 14+ · Apple Silicon 與 Intel · 已簽章與公證</span>
       </p>
       <a class="btn btn-secondary" href="https://github.com/vincentlauriat/BmadBrowser" target="_blank" rel="noopener">
         <span class="en">View on GitHub</span>
-        <span class="fr">Voir sur GitHub</span>
+        <span class="fr">Voir sur GitHub</span><span class="zh">在 GitHub 上檢視</span>
       </a>
     </div>
   </div>
@@ -137,14 +136,14 @@
     </div>
     <div class="cols">
       <div class="col">
-        <div class="ch"><span class="en">Projects</span><span class="fr">Projets</span></div>
+        <div class="ch"><span class="en">Projects</span><span class="fr">Projets</span><span class="zh">專案</span></div>
         <div class="it">NetCheck</div>
         <div class="it on">MoveApps</div>
         <div class="it">StartAlice</div>
         <div class="it">WifiManager</div>
       </div>
       <div class="col">
-        <div class="ch"><span class="en">Documents</span><span class="fr">Documents</span></div>
+        <div class="ch"><span class="en">Documents</span><span class="fr">Documents</span><span class="zh">文件</span></div>
         <div class="it on">prd.md <span class="bdg">done</span></div>
         <div class="it">architecture.md <span class="bdg">wip</span></div>
         <div class="it">epic-2.md</div>
@@ -152,7 +151,7 @@
         <div class="it">diagram.png</div>
       </div>
       <div class="col">
-        <div class="ch"><span class="en">Detail</span><span class="fr">Détail</span></div>
+        <div class="ch"><span class="en">Detail</span><span class="fr">Détail</span><span class="zh">詳細內容</span></div>
         <div class="doc">
           <div class="h">Product Requirements</div>
           <div class="meta"><span>status: done</span><span>type: prd</span><span>2026-07-12</span></div>
@@ -174,44 +173,44 @@
 
   <article class="card">
     <div class="top"><div class="emoji" aria-hidden="true">🔍</div>
-      <h3><span class="en">Auto-detection</span><span class="fr">Détection automatique</span></h3></div>
+      <h3><span class="en">Auto-detection</span><span class="fr">Détection automatique</span><span class="zh">自動偵測</span></h3></div>
     <p><span class="en">Finds your projects and the BMad output folder automatically (<code>_bmad/config.toml</code>, <code>docs/</code>, <code>_bmad-output/</code>).</span>
-       <span class="fr">Détecte automatiquement vos projets et le dossier de sortie BMad (<code>_bmad/config.toml</code>, <code>docs/</code>, <code>_bmad-output/</code>).</span></p>
+       <span class="fr">Détecte automatiquement vos projets et le dossier de sortie BMad (<code>_bmad/config.toml</code>, <code>docs/</code>, <code>_bmad-output/</code>).</span><span class="zh">自動偵測你的專案與 BMad 輸出資料夾（<code>_bmad/config.toml</code>、<code>docs/</code>、<code>_bmad-output/</code>）。</span></p>
   </article>
 
   <article class="card">
     <div class="top"><div class="emoji" aria-hidden="true">📝</div>
-      <h3><span class="en">Rich markdown</span><span class="fr">Rendu markdown riche</span></h3></div>
+      <h3><span class="en">Rich markdown</span><span class="fr">Rendu markdown riche</span><span class="zh">完整 markdown 呈現</span></h3></div>
     <p><span class="en">Clean markdown rendering with text selection, so you can read and copy from your artifacts naturally.</span>
-       <span class="fr">Rendu markdown soigné avec sélection de texte, pour lire et copier vos artefacts naturellement.</span></p>
+       <span class="fr">Rendu markdown soigné avec sélection de texte, pour lire et copier vos artefacts naturellement.</span><span class="zh">精緻的 markdown 呈現並可選取文字，讓你自然地閱讀與複製產出物。</span></p>
   </article>
 
   <article class="card">
     <div class="top"><div class="emoji" aria-hidden="true">🖼️</div>
-      <h3><span class="en">Image &amp; PDF preview</span><span class="fr">Aperçu images &amp; PDF</span></h3></div>
+      <h3><span class="en">Image &amp; PDF preview</span><span class="fr">Aperçu images &amp; PDF</span><span class="zh">圖片與 PDF 預覽</span></h3></div>
     <p><span class="en">Built-in preview for images and PDFs — no need to switch apps to check a diagram or a spec.</span>
-       <span class="fr">Aperçu intégré pour les images et les PDF — pas besoin de changer d'app pour vérifier un schéma ou une spec.</span></p>
+       <span class="fr">Aperçu intégré pour les images et les PDF — pas besoin de changer d'app pour vérifier un schéma ou une spec.</span><span class="zh">內建圖片與 PDF 預覽——不必切換應用程式就能確認一張圖或一份規格。</span></p>
   </article>
 
   <article class="card">
     <div class="top"><div class="emoji" aria-hidden="true">✏️</div>
-      <h3><span class="en">Edit &amp; save</span><span class="fr">Édition &amp; sauvegarde</span></h3></div>
+      <h3><span class="en">Edit &amp; save</span><span class="fr">Édition &amp; sauvegarde</span><span class="zh">編輯與儲存</span></h3></div>
     <p><span class="en">Edit and save (⌘S) text files — yaml, json, txt, csv, toml, md — right where they live.</span>
-       <span class="fr">Éditez et sauvegardez (⌘S) les fichiers texte — yaml, json, txt, csv, toml, md — là où ils se trouvent.</span></p>
+       <span class="fr">Éditez et sauvegardez (⌘S) les fichiers texte — yaml, json, txt, csv, toml, md — là où ils se trouvent.</span><span class="zh">就地編輯並儲存（⌘S）文字檔——yaml、json、txt、csv、toml、md。</span></p>
   </article>
 
   <article class="card">
     <div class="top"><div class="emoji" aria-hidden="true">🏷️</div>
-      <h3><span class="en">Frontmatter badges</span><span class="fr">Badges de frontmatter</span></h3></div>
+      <h3><span class="en">Frontmatter badges</span><span class="fr">Badges de frontmatter</span><span class="zh">Frontmatter 標籤</span></h3></div>
     <p><span class="en">YAML frontmatter surfaced as badges (status, type, date) plus filter by name to find documents fast.</span>
-       <span class="fr">Le frontmatter YAML affiché en badges (statut, type, date), avec filtre par nom pour retrouver un document vite.</span></p>
+       <span class="fr">Le frontmatter YAML affiché en badges (statut, type, date), avec filtre par nom pour retrouver un document vite.</span><span class="zh">YAML frontmatter 以標籤呈現（狀態、類型、日期），並可依名稱篩選，快速找到文件。</span></p>
   </article>
 
   <article class="card">
     <div class="top"><div class="emoji" aria-hidden="true">🌐</div>
-      <h3><span class="en">Bilingual EN/FR</span><span class="fr">Bilingue EN/FR</span></h3></div>
+      <h3><span class="en">Bilingual EN/FR</span><span class="fr">Bilingue EN/FR</span><span class="zh">雙語 EN/FR</span></h3></div>
     <p><span class="en"><b>Bilingual interface</b> that remembers your last opened project between sessions.</span>
-       <span class="fr">Une <b>interface bilingue</b> qui se souvient du dernier projet ouvert entre les sessions.</span></p>
+       <span class="fr">Une <b>interface bilingue</b> qui se souvient du dernier projet ouvert entre les sessions.</span><span class="zh"><b>雙語介面</b>，並在不同工作階段之間記住最後開啟的專案。</span></p>
   </article>
 
 </div></div>
@@ -219,24 +218,37 @@
 <footer><div class="wrap">
   <p>
     <span class="en">More about me on <a href="https://lauriat.fr" target="_blank" rel="noopener">lauriat.fr</a> · </span>
-    <span class="fr">Plus sur moi sur <a href="https://lauriat.fr" target="_blank" rel="noopener">lauriat.fr</a> · </span>
+    <span class="fr">Plus sur moi sur <a href="https://lauriat.fr" target="_blank" rel="noopener">lauriat.fr</a> · </span><span class="zh">更多關於我的內容請見 <a href="https://lauriat.fr" target="_blank" rel="noopener">lauriat.fr</a> · </span>
     <a href="https://github.com/vincentlauriat" target="_blank" rel="noopener">GitHub</a>
   </p>
 </div></footer>
 
 <script>
+  /* zh-Hant et non zh : sur un système configuré en chinois simplifié, un
+     simple `zh` laisse le navigateur choisir une fonte Han simplifiée, qui
+     rend certains caractères traditionnels dans la mauvaise forme. */
+  var LANG_TAG={en:'en',fr:'fr',zh:'zh-Hant'};
   function setLang(l){
-    document.body.classList.remove('lang-en','lang-fr');
+    if(!LANG_TAG[l]) l='en';
+    document.body.classList.remove('lang-en','lang-fr','lang-zh');
     document.body.classList.add('lang-'+l);
-    document.documentElement.lang=l;
-    document.getElementById('l-en').classList.toggle('on',l==='en');
-    document.getElementById('l-fr').classList.toggle('on',l==='fr');
+    document.documentElement.lang=LANG_TAG[l];
+    /* On boucle sur les boutons au lieu de les nommer un par un : ajouter une
+       4e langue ne demandera alors aucune retouche de ce script. */
+    document.querySelectorAll('.langtog button').forEach(function(b){
+      var on=b.dataset.lang===l;
+      b.classList.toggle('on',on);
+      b.setAttribute('aria-pressed',on?'true':'false');
+    });
     try{localStorage.setItem('vl-lang',l)}catch(e){}
   }
   (function(){
     var saved;try{saved=localStorage.getItem('vl-lang')}catch(e){}
-    var l=saved||((navigator.language||'en').slice(0,2)==='fr'?'fr':'en');
-    setLang(l);
+    var n=(navigator.language||'en').slice(0,2).toLowerCase();
+    /* Le traditionnel est servi a tout visiteur sinophone, y compris zh-CN :
+       c'est la seule variante chinoise disponible, et la renvoyer vaut mieux
+       que de rabattre ce visiteur sur l'anglais. */
+    setLang(saved||(n==='zh'?'zh':(n==='fr'?'fr':'en')));
   })();
 </script>
 </body>
