@@ -8,10 +8,14 @@
 <meta property="og:title" content="BmadBrowser — macOS browser & editor for BMad artifacts">
 <meta property="og:description" content="Native macOS browser and editor for BMad method markdown artifacts. Free, signed & notarized download.">
 <meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/base.css">
 <style>
   :root{
     --bg:#0b1020; --bg2:#0f1630; --card:#141c38; --line:#243056;
-    --txt:#eaf0ff; --muted:#a7b3d6; --accent:#5b8bff; --accent2:#7c5cff; --radius:16px;
+    --txt:#eaf0ff; --muted:#a7b3d6; --accent:#38bdf8; --accent2:#7dd3fc; --on-accent:#08090d; --radius:16px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -30,20 +34,20 @@
   nav .spacer{flex:1}
   .langtog{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
   .langtog button{background:transparent;color:var(--muted);border:0;padding:5px 12px;font-size:.82rem;cursor:pointer;font-weight:600}
-  .langtog button.on{background:var(--accent);color:#fff}
+  .langtog button.on{background:var(--accent);color:var(--on-accent)}
   .ghlink{color:var(--muted);font-size:.9rem;font-weight:600}
   header{padding:72px 0 40px;text-align:center}
   .icon{width:96px;height:96px;border-radius:22px;margin:0 auto 24px;display:block;
-    box-shadow:0 12px 32px rgba(91,139,255,.28);border:1px solid var(--line)}
+    box-shadow:0 12px 32px rgba(56,189,248,.28);border:1px solid var(--line)}
   h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
   h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
   .tagline{font-size:clamp(1.05rem,2.4vw,1.3rem);color:var(--muted);max-width:640px;margin:0 auto}
   .cta-row{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:36px}
   .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:1.02rem;
     padding:14px 28px;border-radius:999px;transition:transform .14s ease,box-shadow .2s ease}
-  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
-    box-shadow:0 8px 24px rgba(91,139,255,.35)}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(91,139,255,.48)}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--on-accent);
+    box-shadow:0 8px 24px rgba(56,189,248,.35)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(56,189,248,.48)}
   .btn-secondary{color:var(--muted);border:1px solid var(--line);padding:12px 24px}
   .btn-secondary:hover{border-color:var(--accent);color:var(--txt)}
   .subtext{color:var(--muted);font-size:.85rem}
@@ -59,17 +63,10 @@
   .featured{grid-column:1/-1;background:linear-gradient(135deg,#16204a,#1a1440);border-color:#33407a}
   footer{padding:40px 0 64px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:.9rem}
   footer a{color:var(--accent);font-weight:600}
-
-  /* a11y : respecter la préférence système de mouvement réduit */
-  @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{
-      animation-duration:.01ms !important;animation-iteration-count:1 !important;
-      transition-duration:.01ms !important;scroll-behavior:auto !important;
-    }
-  }
 </style>
 </head>
 <body class="lang-en">
+<a class="skip" href="#top"><span class="en">Skip to content</span><span class="fr">Aller au contenu</span></a>
 
 <nav><div class="wrap">
   <b>BmadBrowser</b>
@@ -81,7 +78,7 @@
   <a class="ghlink" href="https://github.com/vincentlauriat/BmadBrowser" target="_blank" rel="noopener">GitHub ↗</a>
 </div></nav>
 
-<header><div class="wrap">
+<header id="top"><div class="wrap">
   <img class="icon" src="icon.png" alt="BmadBrowser app icon">
   <h1><span class="grad">BmadBrowser</span></h1>
   <p class="tagline">
