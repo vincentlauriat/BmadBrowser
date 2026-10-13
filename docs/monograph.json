@@ -1,0 +1,88 @@
+{
+  "name": "BmadBrowser",
+  "no": "09",
+  "repo": "vincentlauriat/BmadBrowser",
+  "url": "https://vincentlauriat.github.io/BmadBrowser/",
+  "accent": "#38bdf8",
+  "meta": {
+    "title": "BmadBrowser — macOS browser & editor for BMad artifacts",
+    "description": "BmadBrowser is a native macOS browser and editor for BMad method markdown artifacts — auto-detects projects, renders markdown, previews images and PDFs, and edits text files.",
+    "favicon": "icon.png"
+  },
+  "role": {
+    "en": "Native macOS browser &amp; editor for BMad artifacts",
+    "fr": "Navigateur et éditeur macOS natif pour les artefacts BMad",
+    "zh": "BMad 產出物的原生 macOS 瀏覽器與編輯器"
+  },
+  "thesis": {
+    "en": "Browse and edit BMad artifacts without leaving the flow.",
+    "fr": "Parcourez et éditez vos artefacts BMad sans rompre le flux.",
+    "zh": "瀏覽並編輯你的 BMad 產出物，不打斷心流。"
+  },
+  "lede": {
+    "en": "A focused 3-column UI — Projects, Documents, Detail — for the markdown the BMad method leaves behind. Native macOS, no Electron.",
+    "fr": "Une UI en 3 colonnes — Projets, Documents, Détail — pour le markdown que laisse la méthode BMad. Natif macOS, sans Electron.",
+    "zh": "三欄式介面——專案、文件、詳細內容——為 BMad 方法留下的 markdown 而設計。原生 macOS，不使用 Electron。"
+  },
+  "actions": [
+    {"primary": true, "href": "https://github.com/vincentlauriat/BmadBrowser/releases/latest/download/BmadBrowser.dmg",
+     "label": {"en": "Download for macOS", "fr": "Télécharger pour macOS", "zh": "下載 macOS 版"}},
+    {"href": "https://github.com/vincentlauriat/BmadBrowser",
+     "label": {"en": "View on GitHub", "fr": "Voir sur GitHub", "zh": "在 GitHub 上檢視"}}
+  ],
+  "facts": [
+    {"k": {"en": "Requires", "fr": "Configuration", "zh": "系統需求"}, "v": "macOS 14+"},
+    {"k": {"en": "Architecture", "fr": "Architecture", "zh": "架構"},
+     "v": {"en": "Apple Silicon &amp; Intel", "fr": "Apple Silicon &amp; Intel", "zh": "Apple Silicon 與 Intel"}},
+    {"k": {"en": "Distribution", "fr": "Distribution", "zh": "發行"},
+     "v": {"en": "Signed &amp; notarized", "fr": "Signée &amp; notarisée", "zh": "已簽章與公證"}}
+  ],
+  "opener": {
+    "h": {"en": "Features", "fr": "Fonctionnalités", "zh": "功能"}
+  },
+  "features": [
+    {"h": {"en": "Auto-detection", "fr": "Détection automatique", "zh": "自動偵測"},
+     "p": {"en": "Finds your projects and the BMad output folder automatically (<code>_bmad/config.toml</code>, <code>docs/</code>, <code>_bmad-output/</code>).",
+           "fr": "Détecte automatiquement vos projets et le dossier de sortie BMad (<code>_bmad/config.toml</code>, <code>docs/</code>, <code>_bmad-output/</code>).",
+           "zh": "自動偵測你的專案與 BMad 輸出資料夾（<code>_bmad/config.toml</code>、<code>docs/</code>、<code>_bmad-output/</code>）。"}},
+    {"h": {"en": "Rich markdown", "fr": "Rendu markdown riche", "zh": "完整 markdown 呈現"},
+     "p": {"en": "Clean markdown rendering with text selection, so you can read and copy from your artifacts naturally.",
+           "fr": "Rendu markdown soigné avec sélection de texte, pour lire et copier vos artefacts naturellement.",
+           "zh": "精緻的 markdown 呈現並可選取文字，讓你自然地閱讀與複製產出物。"}},
+    {"h": {"en": "Image &amp; PDF preview", "fr": "Aperçu images &amp; PDF", "zh": "圖片與 PDF 預覽"},
+     "p": {"en": "Built-in preview for images and PDFs — no need to switch apps to check a diagram or a spec.",
+           "fr": "Aperçu intégré pour les images et les PDF — pas besoin de changer d'app pour vérifier un schéma ou une spec.",
+           "zh": "內建圖片與 PDF 預覽——不必切換應用程式就能確認一張圖或一份規格。"}},
+    {"h": {"en": "Edit &amp; save", "fr": "Édition &amp; sauvegarde", "zh": "編輯與儲存"},
+     "p": {"en": "Edit and save (⌘S) text files — yaml, json, txt, csv, toml, md — right where they live.",
+           "fr": "Éditez et sauvegardez (⌘S) les fichiers texte — yaml, json, txt, csv, toml, md — là où ils se trouvent.",
+           "zh": "就地編輯並儲存（⌘S）文字檔——yaml、json、txt、csv、toml、md。"}},
+    {"h": {"en": "Frontmatter badges", "fr": "Badges de frontmatter", "zh": "Frontmatter 標籤"},
+     "p": {"en": "YAML frontmatter surfaced as badges (status, type, date) plus filter by name to find documents fast.",
+           "fr": "Le frontmatter YAML affiché en badges (statut, type, date), avec filtre par nom pour retrouver un document vite.",
+           "zh": "YAML frontmatter 以標籤呈現（狀態、類型、日期），並可依名稱篩選，快速找到文件。"}},
+    {"h": {"en": "Bilingual EN/FR", "fr": "Bilingue EN/FR", "zh": "雙語 EN/FR"},
+     "p": {"en": "<b>Bilingual interface</b> that remembers your last opened project between sessions.",
+           "fr": "Une <b>interface bilingue</b> qui se souvient du dernier projet ouvert entre les sessions.",
+           "zh": "<b>雙語介面</b>，並在不同工作階段之間記住最後開啟的專案。"}}
+  ],
+  "close": {
+    "h": {"en": "Native macOS, no Electron.", "fr": "Natif macOS, sans Electron.", "zh": "原生 macOS，不使用 Electron。"},
+    "p": {"en": "macOS 14+ · Apple Silicon &amp; Intel · Signed &amp; notarized",
+          "fr": "macOS 14+ · Apple Silicon &amp; Intel · Signée &amp; notarisée",
+          "zh": "macOS 14+ · Apple Silicon 與 Intel · 已簽章與公證"},
+    "actions": [
+      {"primary": true, "href": "https://github.com/vincentlauriat/BmadBrowser/releases/latest/download/BmadBrowser.dmg",
+       "label": {"en": "Download for macOS", "fr": "Télécharger pour macOS", "zh": "下載 macOS 版"}},
+      {"href": "https://github.com/vincentlauriat/BmadBrowser",
+       "label": {"en": "View on GitHub", "fr": "Voir sur GitHub", "zh": "在 GitHub 上檢視"}}
+    ]
+  },
+  "colophon": {
+    "notes": [
+      {"en": "More about me on <a href=\"https://lauriat.fr\">lauriat.fr</a> · <a href=\"https://github.com/vincentlauriat\">GitHub</a>",
+       "fr": "Plus sur moi sur <a href=\"https://lauriat.fr\">lauriat.fr</a> · <a href=\"https://github.com/vincentlauriat\">GitHub</a>",
+       "zh": "更多關於我的內容請見 <a href=\"https://lauriat.fr\">lauriat.fr</a> · <a href=\"https://github.com/vincentlauriat\">GitHub</a>"}
+    ]
+  }
+}
